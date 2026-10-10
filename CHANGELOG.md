@@ -1,6 +1,32 @@
 # Changelog
 
+All notable changes to Number Trouble. Version numbers follow
+[Semantic Versioning 2.0.0](https://semver.org/).
+New entries belong in **Unreleased**, with the latest version listed first.
+Agent guidelines: [AGENTS.md](AGENTS.md). Release procedure: [docs/RELEASE.md](docs/RELEASE.md).
+
+This changelog is written in English. The user-facing history is maintained in
+Polish and English in `src/release-notes.json`.
+
 ## Unreleased
+
+### Added
+
+- Show the package version and bilingual, offline release history in the app footer.
+- Remember the last launched version across profiles and show new release notes once
+  after an upgrade, including skipped releases, without announcing first launches or rollbacks.
+
+### Tests
+
+- Verify SemVer ordering, release metadata consistency, preserved profile data,
+  upgrade notices, keyboard access and offline release history in both languages.
+
+### Documentation
+
+- Document Semantic Versioning and the release procedure; record the already published
+  MVP as v1.0.0 without changing package versions or creating a release tag.
+
+## v1.0.0 — 2026-10-10
 
 ### Added
 

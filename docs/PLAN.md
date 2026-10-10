@@ -138,3 +138,9 @@ podaje [QA.md](QA.md). Powyższe punkty pozostają kryteriami poszczególnych et
 Nie wykonano instalacji na fizycznym telefonie/tablecie ani wspólnej próby z dziećmi.
 Te sprawdzenia, ocena wygody ruchomych przycisków i ewentualne dostrojenie tempa
 pozostają następnym krokiem. Publikację obsługuje workflow GitHub Pages po pushu do `master`, zgodnie z README.
+
+## Historia zmian i wersjonowanie
+
+Dodano wersję i historię w stopce, polskie i angielskie opisy wydań oraz wspólny dla
+profili znacznik ostatniej uruchomionej wersji. Aktualizacja pokazuje nowości jednokrotnie.
+Zasady wydawania są w [RELEASE.md](RELEASE.md); zwykłe zadania pozostają w `Unreleased`.

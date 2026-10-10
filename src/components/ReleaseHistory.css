@@ -1,0 +1,44 @@
+footer > .release-history-button {
+  color: var(--blue);
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 8px;
+  min-height: 44px;
+}
+.release-history-button span:last-child {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.release-history {
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.release-history .release-intro {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.release-entry {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.release-version {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: #eaf2fa;
+  color: #285982;
+  font-weight: 700;
+}
+.release-entry h3 {
+  margin: 12px 0;
+  font-size: 22px;
+  line-height: 1.35;
+}
+.release-entry ul {
+  padding-left: 24px;
+  list-style: disc;
+}
+.release-entry li + li {
+  margin-top: 12px;
+}

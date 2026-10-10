@@ -35,3 +35,20 @@
   Oddziel wyniki testów automatycznych od niewykonanych prób na rzeczywistych urządzeniach.
 - Dla samych zmian dokumentacyjnych wystarczy sprawdzenie spójności, lokalnych linków
   i `git diff --check`; nie instaluj zależności aplikacji tylko w tym celu.
+
+## Changelog i wersjonowanie
+
+- Każda zmiana, również CI, testy i dokumentacja, wymaga krótkiego angielskiego wpisu
+  w `## Unreleased` w tym samym zestawie zmian. Nie dubluj wpisów o tej samej zmianie.
+- Używaj pasujących podsekcji `Added`, `Changed`, `Fixed`, `Deprecated`, `Removed`,
+  `Security`, `Maintenance`, `Tests`, `Documentation`. Zachowuj wpisy innych autorów.
+  Nie dopisuj nowych prac do zamkniętych wersji ani nie zmieniaj ich dat i numerów.
+- Historia widoczna w aplikacji musi mieć polskie i angielskie tytuły oraz opisy
+  w `src/release-notes.json`. Teksty dopasuj do gracza; nie kopiuj technicznych wpisów
+  z changelogu i nie pokazuj `Unreleased` w interfejsie.
+- Numer aplikacji pochodzi z `package.json`. Oba pola wersji w lockfile i najnowszy
+  wpis historii muszą być zgodne. Wersja aplikacji jest niezależna od wersji schematu danych.
+- Zwykłe zadanie nie podbija wersji, nie zamyka `Unreleased` i nie tworzy tagu.
+  Przy poleceniu wydania stosuj [docs/RELEASE.md](docs/RELEASE.md).
+- Podczas wydania sprawdź treść obu tłumaczeń, zgodność metadanych, okno nowości,
+  jednorazowy pokaz po aktualizacji i działanie historii offline. Wyniki zapisuj w QA.

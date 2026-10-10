@@ -100,3 +100,28 @@ Zrzuty z testów są w ignorowanym katalogu `test-results/` i powstają przy pon
 
 Emulacja ekranu i syntetyczny dotyk nie zastępują prób sprzętowych. Parametry tempa
 zapisano w wymaganiach i można je dostroić po tych próbach bez zmiany reguł MVP.
+
+## Historia zmian i wersjonowanie — 10 października 2026
+
+Weryfikacja mechanizmu wzorowanego na Czytankach, z zachowaniem wersji aplikacji `1.0.0`.
+
+- `npm test`: **29/29** testów, w tym sześć nowych testów SemVer, pominiętych wydań,
+  zgodności changelogu i obu tłumaczeń z pakietem/lockfile oraz zachowania profili.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony; historia jest częścią
+  lokalnego pakietu i produkcyjnej pamięci offline.
+- `npm run test:e2e`: **10/10** scenariuszy. Dotychczasowe siedem scenariuszy gry
+  oraz trzy nowe scenariusze historii zmian zakończyły się powodzeniem.
+- Numer i przycisk historii są dostępne na ekranie gry, profili i rekordów poza partią.
+  Enter otwiera okno, Escape zamyka i przywraca fokus; historia mieści się na szerokości
+  320 px i przewija wewnątrz okna. Sprawdzono zrzut małego ekranu.
+- Historia i okno nowości działają po polsku i angielsku, również po przeładowaniu offline.
+  Nie pokazują technicznej sekcji `Unreleased`.
+- Symulowana poprzednia wersja `1.0.0-rc.1` wyświetla nowości raz. Kolejne uruchomienie,
+  zmiana profilu, pierwszy start, niepoprawny znacznik i rollback nie wywołują okna.
+- Aktualizacja zachowuje istniejące profile, aktywne dziecko, ustawienia i rekord 43 punktów.
+  Znacznik wersji pozostaje wspólny podczas zmian profili, rekordów, resetu i usuwania.
+- axe-core: brak naruszeń w angielskim oknie historii na małym ekranie.
+- `npm run format:check`, `npx tsc -b`, `git diff --check`: zaliczone.
+
+Wersja i schemat localStorage nie zostały podbite; nie utworzono tagu wydania.
+Teksty obu języków przejrzano. Dotychczasowe ograniczenia prób sprzętowych pozostają aktualne.

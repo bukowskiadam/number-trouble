@@ -1,0 +1,25 @@
+[
+  {
+    "version": "1.0.0",
+    "pl": {
+      "title": "Pierwsza przygoda z liczbami",
+      "changes": [
+        "Cztery poziomy dodawania i odejmowania oraz trzy tempa: żółw, koń i gepard.",
+        "Oceniaj spadające równania przyciskami ✓ i ✗. Kolejne trafienia zwiększają serię i liczbę zdobywanych punktów.",
+        "Po błędzie lub braku odpowiedzi zobaczysz poprawny wynik. Gra kończy się po zapełnieniu ośmiu miejsc.",
+        "Każde dziecko ma własny profil, ustawienia i osobne rekordy dla każdego poziomu i tempa.",
+        "Graj po polsku lub angielsku, z dźwiękami albo bez. Po przygotowaniu offline możesz grać bez internetu."
+      ]
+    },
+    "en": {
+      "title": "Your first number adventure",
+      "changes": [
+        "Four addition and subtraction levels and three speeds: turtle, horse and cheetah.",
+        "Judge falling equations with ✓ and ✗. Correct answers in a row grow your streak and earn more points.",
+        "See the correct answer after a mistake or a missed equation. The game ends when all eight spaces are filled.",
+        "Each child has their own profile, settings and records for every level and speed.",
+        "Play in Polish or English, with sounds or in silence. Once offline play is ready, you can play without the internet."
+      ]
+    }
+  }
+]

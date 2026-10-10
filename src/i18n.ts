@@ -1,5 +1,12 @@
 export const text = {
   pl: {
+    version: 'Wersja',
+    releaseHistory: 'Historia zmian',
+    whatsNew: 'Co nowego w Number Trouble?',
+    releaseIntro: 'Zobacz, jak rozwija się nasza wspólna zabawa z liczbami.',
+    updatesIntro: 'Zobacz, co zmieniło się od Twojej ostatniej wizyty.',
+    noReleaseNotes: 'Pełną historię zmian znajdziesz w stopce aplikacji.',
+    backToCounting: 'Wracam do liczenia',
     tagline: 'MAŁE DZIAŁANIA, WIELKA FRAJDA',
     play: 'Zagraj',
     profiles: 'Profile',
@@ -101,6 +108,13 @@ export const text = {
     board: 'Plansza z ośmioma miejscami',
   },
   en: {
+    version: 'Version',
+    releaseHistory: 'Release history',
+    whatsNew: 'What’s new in Number Trouble?',
+    releaseIntro: 'See how our number adventure is growing.',
+    updatesIntro: 'See what has changed since your last visit.',
+    noReleaseNotes: 'Find the full release history in the app footer.',
+    backToCounting: 'Back to counting',
     tagline: 'LITTLE SUMS, BIG FUN',
     play: 'Play',
     profiles: 'Profiles',

@@ -92,6 +92,19 @@ Playwright. Generowanie ikon nie jest potrzebne do zwykłego buildu.
 Wyniki i ograniczenia: [QA.md](docs/QA.md). Próby z dziećmi oraz instalacja na
 rzeczywistym telefonie/tablecie pozostają do wykonania; emulacja nie zastępuje tych prób.
 
+## Wersja i historia zmian
+
+Stopka każdego widoku menu pokazuje wersję z `package.json` i otwiera historię zmian
+w języku profilu. Opisy są częścią aplikacji i działają offline. Po aktualizacji do
+nowej wersji okno nowości pojawia się raz, z uwzględnieniem pominiętych wydań.
+Pierwsze uruchomienie, ponowne uruchomienie tej samej wersji i rollback nie otwierają okna.
+Wersja ostatniego uruchomienia jest wspólna dla profili i nie zmienia ich rekordów.
+
+Angielski [changelog](CHANGELOG.md) zawiera sekcję roboczą `Unreleased`; historia
+w aplikacji zawiera tylko wydane wersje. Zwykłe zmiany nie podbijają numeru ani nie
+zamykają changelogu. Zasady SemVer, przygotowanie wydania, tagowanie i publikację
+opisuje [procedura wydania](docs/RELEASE.md).
+
 ## Struktura i dokumentacja
 
 - `src/game/` — generator i silnik czasu, punktacji, korekt i lądowania.

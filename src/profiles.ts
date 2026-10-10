@@ -1,3 +1,4 @@
+import { isAppVersion } from './releases';
 import { levels, tempos, type Level, type Tempo } from './game/generator';
 export type Language = 'pl' | 'en';
 export type Settings = { level: Level; tempo: Tempo; language: Language; muted: boolean };
@@ -8,7 +9,12 @@ export type Profile = {
   settings: Settings;
   records: Record<string, Best>;
 };
-export type Store = { version: 1; activeId: string; profiles: Profile[] };
+export type Store = {
+  version: 1;
+  activeId: string;
+  profiles: Profile[];
+  lastLaunchedVersion?: string;
+};
 export const STORAGE_KEY = 'number-trouble-profiles-v1';
 export const recordKey = (level: Level, tempo: Tempo) => `${level}-${tempo}`;
 export function createProfile(
@@ -62,6 +68,9 @@ export function parseStore(raw: string | null): Store {
           version: 1,
           activeId: ids.has(data.activeId) ? data.activeId : profiles[0].id,
           profiles,
+          ...(isAppVersion(data.lastLaunchedVersion)
+            ? { lastLaunchedVersion: data.lastLaunchedVersion }
+            : {}),
         };
     }
   } catch {

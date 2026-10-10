@@ -40,6 +40,8 @@ import { playSound, unlockAudio } from './sound';
 import { usePwa } from './pwa';
 import { Board } from './components/Board';
 import { Dialog } from './components/Dialog';
+import { ReleaseHistory } from './components/ReleaseHistory';
+import { APP_VERSION, hasNewVersion } from './releases';
 
 type Page = 'play' | 'profiles' | 'records';
 type InstallEvent = Event & { prompt: () => Promise<void> };
@@ -51,7 +53,13 @@ export function App() {
       return { store: parseStore(null), failed: true };
     }
   });
-  const [store, setStore] = useState<Store>(initial.store);
+  const [store, setStore] = useState<Store>(() => ({
+    ...initial.store,
+    lastLaunchedVersion: APP_VERSION,
+  }));
+  const [releaseHistory, setReleaseHistory] = useState<'all' | 'updates' | null>(() =>
+    hasNewVersion(initial.store.lastLaunchedVersion) ? 'updates' : null,
+  );
   const [storageError, setStorageError] = useState(initial.failed);
   const [page, setPage] = useState<Page>('play');
   const [game, setGame] = useState<Game | null>(null);
@@ -647,6 +655,12 @@ export function App() {
         </main>
         {!playing && (
           <footer>
+            <button className="release-history-button" onClick={() => setReleaseHistory('all')}>
+              <span>
+                {t.version} v{APP_VERSION}
+              </span>
+              <span>{t.releaseHistory}</span>
+            </button>
             <span className={`offline-status ${pwa.status}`} role="status">
               {pwa.status === 'ready' ? <Cloud size={17} /> : <WifiOff size={17} />}{' '}
               {pwa.status === 'ready'
@@ -676,6 +690,15 @@ export function App() {
           </footer>
         )}
       </div>
+      {releaseHistory && (
+        <ReleaseHistory
+          language={profile.settings.language}
+          previousVersion={
+            releaseHistory === 'updates' ? initial.store.lastLaunchedVersion : undefined
+          }
+          onClose={() => setReleaseHistory(null)}
+        />
+      )}
       {help && (
         <Dialog title={t.how} closeLabel={t.close} onClose={() => setHelp(null)}>
           <p>{t.instruction}</p>
