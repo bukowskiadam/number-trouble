@@ -330,7 +330,10 @@ test('manifest, install assets and update wait until the player leaves the game'
     await page.getByRole('button', { name: 'Pauza', exact: true }).click();
     await page.getByRole('button', { name: 'Wróć do wyboru', exact: true }).click();
     await page.getByRole('button', { name: 'Zakończ partię', exact: true }).click();
-    await page.getByRole('button', { name: /Odśwież aplikację/ }).click();
+    await Promise.all([
+      page.waitForEvent('load'),
+      page.getByRole('button', { name: /Odśwież aplikację/ }).click(),
+    ]);
     await ready(page);
     expect(
       await page.evaluate((k) => JSON.parse(localStorage.getItem(k)!).profiles.length, key),

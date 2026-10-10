@@ -372,11 +372,12 @@ prac bez rozszerzania funkcjonalności:
 
 ## Parametry wybrane w implementacji MVP
 
-- Prędkość początkowa w logicznych warstwach na sekundę: żółw **0,55**, koń **0,85**,
-  gepard **1,20**. Pusta plansza daje odpowiednio około 14,5 / 9,4 / 6,7 s bez
+- Prędkość początkowa w logicznych warstwach na sekundę: żółw **0,40**, koń **0,80**,
+  gepard **1,20**. Pusta plansza daje odpowiednio około 20 / 10 / 6,7 s bez
   przyspieszenia. Droga wynosi `8 − liczba zajętych miejsc`.
-- Mnożnik prędkości: `1 + min(czas aktywnego spadania w sekundach, 180) / 90`.
-  Maksymalna prędkość to trzykrotność początkowej. Pauza, korekta, opadanie po błędzie
+- Mnożnik prędkości: `1 + min(czas aktywnego spadania w sekundach, 240) / 120`.
+  Po 120 sekundach prędkość jest dwukrotna, po 240 sekundach osiąga limit trzykrotności.
+  Pauza, korekta, opadanie po błędzie
   i krótka informacja o trafnej ocenie nie zwiększają tego czasu.
 - Korekta: **2000 ms**, opadanie po niej: **400 ms**, informacja o trafnej ocenie:
   **280 ms**. Dopiero potem powstaje następne równanie.

@@ -1,7 +1,7 @@
 import { generate, type Equation, type Level, type Random, type Tempo } from './generator';
 export const CAPACITY = 8;
 export const CORRECTION_MS = 2000;
-export const BASE_SPEED: Record<Tempo, number> = { turtle: 0.55, horse: 0.85, cheetah: 1.2 };
+export const BASE_SPEED: Record<Tempo, number> = { turtle: 0.4, horse: 0.8, cheetah: 1.2 };
 export type Phase = 'falling' | 'correct' | 'correction' | 'dropping' | 'missed' | 'over';
 export type GameConfig = { profileId: string; level: Level; tempo: Tempo };
 export type GameState = GameConfig & {
@@ -58,15 +58,15 @@ export class Game {
     return CAPACITY - this.state.stack.length;
   }
   get speed() {
-    return BASE_SPEED[this.state.tempo] * (1 + Math.min(this.state.activeMs / 1000, 180) / 90);
+    return BASE_SPEED[this.state.tempo] * (1 + Math.min(this.state.activeMs / 1000, 240) / 120);
   }
   private distance(ms: number) {
     const t = this.state.activeMs / 1000;
     const dt = ms / 1000;
-    const growing = Math.max(0, Math.min(dt, 180 - t));
+    const growing = Math.max(0, Math.min(dt, 240 - t));
     return (
       BASE_SPEED[this.state.tempo] *
-      (growing * (1 + t / 90) + (growing * growing) / 180 + (dt - growing) * 3)
+      (growing * (1 + t / 120) + (growing * growing) / 240 + (dt - growing) * 3)
     );
   }
   advance(now: number) {

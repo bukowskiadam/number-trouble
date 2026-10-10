@@ -135,6 +135,9 @@ Etapy 1–4 mają implementację w repozytorium. Etap 5 ma testy generatora, sil
 profili, dźwięków oraz testy Playwright produkcyjnej aplikacji. Szczegółowe wyniki
 podaje [QA.md](QA.md). Powyższe punkty pozostają kryteriami poszczególnych etapów.
 
+Dostrojono tempa początkowe do 0,4 / 0,8 / 1,2 warstwy/s oraz wydłużono
+przyspieszanie: dwukrotność po 120 s aktywnego spadania, limit trzykrotności po 240 s.
+
 Nie wykonano instalacji na fizycznym telefonie/tablecie ani wspólnej próby z dziećmi.
 Te sprawdzenia, ocena wygody ruchomych przycisków i ewentualne dostrojenie tempa
 pozostają następnym krokiem. Publikację obsługuje workflow GitHub Pages po pushu do `master`, zgodnie z README.

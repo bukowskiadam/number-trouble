@@ -2,6 +2,11 @@ import { test, expect, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFileSync } from 'node:fs';
 const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const history = JSON.parse(
+  readFileSync(new URL('../src/release-notes.json', import.meta.url), 'utf8'),
+);
+const latest = history[0];
+const previousVersion = history[1]?.version ?? `${version}-rc.1`;
 const key = 'number-trouble-profiles-v1';
 async function setPrevious(page: Page, previous: unknown) {
   await page.evaluate(
@@ -32,6 +37,7 @@ test('history in all menu views, both languages, keyboard, phone and offline', a
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog', { name: 'Historia zmian', exact: true })).toBeVisible();
     await expect(page.getByRole('dialog')).toContainText('Pierwsza przygoda z liczbami');
+    await expect(page.getByRole('dialog')).toContainText(latest.pl.title);
     await expect(page.getByRole('dialog')).not.toContainText('Unreleased');
     await page.keyboard.press('Escape');
     await expect(button).toBeFocused();
@@ -42,7 +48,7 @@ test('history in all menu views, both languages, keyboard, phone and offline', a
     .getByRole('button', { name: `Version v${version} Release history`, exact: true })
     .click();
   await expect(page.getByRole('dialog', { name: 'Release history', exact: true })).toBeVisible();
-  await expect(page.getByRole('dialog')).toContainText('Your first number adventure');
+  await expect(page.getByRole('dialog')).toContainText(latest.en.title);
   expect(
     (await new AxeBuilder({ page }).analyze()).violations.map((v) => ({
       id: v.id,
@@ -57,13 +63,14 @@ test('history in all menu views, both languages, keyboard, phone and offline', a
   await page
     .getByRole('button', { name: `Version v${version} Release history`, exact: true })
     .click();
-  await expect(page.getByRole('dialog')).toContainText('Your first number adventure');
+  await expect(page.getByRole('dialog')).toContainText(latest.en.title);
   await page.keyboard.press('Escape');
   await page.getByLabel('Language', { exact: true }).selectOption('pl');
   await page
     .getByRole('button', { name: `Wersja v${version} Historia zmian`, exact: true })
     .click();
   await expect(page.getByRole('dialog')).toContainText('Pierwsza przygoda z liczbami');
+  await expect(page.getByRole('dialog')).toContainText(latest.pl.title);
 });
 
 test('upgrade notice appears once offline and preserves profiles, settings and records', async ({
@@ -86,11 +93,12 @@ test('upgrade notice appears once offline and preserves profiles, settings and r
   }, key);
   const before = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   await context.setOffline(true);
-  await setPrevious(page, `${version}-rc.1`);
+  await setPrevious(page, previousVersion);
   await expect(
     page.getByRole('dialog', { name: 'Co nowego w Number Trouble?', exact: true }),
   ).toBeVisible();
   await expect(page.getByRole('dialog')).toContainText(`v${version}`);
+  await expect(page.getByRole('dialog')).toContainText(latest.pl.title);
   await page.getByRole('button', { name: 'Wracam do liczenia', exact: true }).click();
   await expect(page.locator('.best-preview')).toContainText('43');
   const after = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
@@ -100,11 +108,11 @@ test('upgrade notice appears once offline and preserves profiles, settings and r
   await page.reload();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.getByLabel('Język', { exact: true }).selectOption('en');
-  await setPrevious(page, `${version}-rc.1`);
+  await setPrevious(page, previousVersion);
   await expect(
     page.getByRole('dialog', { name: 'What’s new in Number Trouble?', exact: true }),
   ).toBeVisible();
-  await expect(page.getByRole('dialog')).toContainText('Your first number adventure');
+  await expect(page.getByRole('dialog')).toContainText(latest.en.title);
   await page.keyboard.press('Escape');
   await page.reload();
   await expect(page.getByRole('dialog')).toHaveCount(0);

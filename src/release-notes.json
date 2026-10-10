@@ -1,5 +1,24 @@
 [
   {
+    "version": "1.0.1",
+    "pl": {
+      "title": "Spokojniejsze tempo i historia zmian",
+      "changes": [
+        "Żółw i koń zaczynają wolniej, dając więcej czasu na odpowiedź.",
+        "Wszystkie tempa przyspieszają łagodniej: do dwukrotnej prędkości po 120 sekundach aktywnego spadania i maksymalnie trzykrotnej po 240 sekundach.",
+        "W stopce sprawdzisz wersję gry i historię zmian. Po aktualizacji zobaczysz nowości tylko raz, także bez internetu."
+      ]
+    },
+    "en": {
+      "title": "A gentler pace and release history",
+      "changes": [
+        "Turtle and horse start slower, giving you more time to answer.",
+        "All paces accelerate more gradually: double speed after 120 seconds of active falling, with a maximum of triple speed after 240 seconds.",
+        "Check the game version and release history in the footer. After an update, see what’s new just once, even offline."
+      ]
+    }
+  },
+  {
     "version": "1.0.0",
     "pl": {
       "title": "Pierwsza przygoda z liczbami",

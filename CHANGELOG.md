@@ -10,13 +10,24 @@ Polish and English in `src/release-notes.json`.
 
 ## Unreleased
 
+## v1.0.1 — 2026-10-10
+
 ### Added
 
 - Show the package version and bilingual, offline release history in the app footer.
 - Remember the last launched version across profiles and show new release notes once
   after an upgrade, including skipped releases, without announcing first launches or rollbacks.
 
+### Changed
+
+- Set starting speeds to 0.4/0.8/1.2 layers per second and slow acceleration to double
+  after 120 active seconds and reach the triple-speed cap after 240 seconds; cover
+  the new timing and movement across the cap with regression tests.
+
 ### Tests
+
+- Check upgrades from the previous published version and wait for the service worker
+  update reload before checking preserved profile data.
 
 - Verify SemVer ordering, release metadata consistency, preserved profile data,
   upgrade notices, keyboard access and offline release history in both languages.

@@ -125,3 +125,29 @@ Weryfikacja mechanizmu wzorowanego na Czytankach, z zachowaniem wersji aplikacji
 
 Wersja i schemat localStorage nie zostały podbite; nie utworzono tagu wydania.
 Teksty obu języków przejrzano. Dotychczasowe ograniczenia prób sprzętowych pozostają aktualne.
+
+## Dostrojenie tempa — 10 października 2026
+
+- Prędkości początkowe: żółw 0,4, koń 0,8, gepard 1,2 warstwy/s.
+  Przyspieszanie osiąga 2× po 120 s aktywnego spadania i limit 3× po 240 s.
+- `npm test`: **33/33** testy zaliczone. Nowe testy obejmują wszystkie trzy tempa,
+  progi przyspieszania, utrzymanie limitu do 300 s i ruch przez granicę 240 s
+  niezależnie od wielkości kroku czasu. Sprawdzono też granicę lądowania i pauzę.
+- `npm run build`, `npm run format:check`, `git diff --check`: zaliczone.
+- `npm run test:e2e`: **10/10** scenariuszy zaliczonych, w tym rozgrywka na komputerze
+  i telefonie, korekty, profile, oba języki oraz produkcyjny tryb offline.
+- Nie wykonywano nowych prób na fizycznych urządzeniach ani oceny tempa z dziećmi.
+
+## Wydanie poprawkowe 1.0.1 — 10 października 2026
+
+- Zgodnie z poleceniem wydania jako fix podbito wersję do `1.0.1` w pakiecie,
+  obu metadanych lockfile, historii PL/EN i zamkniętej sekcji changelogu.
+- `npm run format:check`, `npm test` (**33/33**),
+  `VITE_BASE_PATH=/number-trouble/ npm run build` oraz `git diff --check`: zaliczone.
+- `npm run test:e2e`: **10/10** po poprawieniu oczekiwania na przeładowanie strony
+  w teście aktualizacji service workera. Pierwsza próba wykryła odczyt danych
+  podczas nawigacji; poprawka dotyczy synchronizacji testu.
+- Sprawdzono stopkę `v1.0.1`, nowe teksty historii PL/EN, jednokrotne okno nowości
+  po aktualizacji z `1.0.0`, zachowanie profili i rekordów oraz historię offline.
+- Przejrzano oba tłumaczenia i zrzut historii na ekranie 320 × 568.
+- Próby na fizycznych urządzeniach i z dziećmi pozostają niewykonane.

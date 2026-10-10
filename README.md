@@ -63,7 +63,8 @@ npm run test:e2e
 
 - Cztery poziomy: suma do 10; dwa składniki 0–10; dodawanie i odejmowanie 0–10
   z nieujemnym wynikiem; suma do 100.
-- Trzy niezależne tempa: żółw, koń i gepard. Przyspieszanie podczas aktywnego spadania.
+- Trzy niezależne tempa: żółw (0,4), koń (0,8) i gepard (1,2 warstwy/s).
+  Przyspieszanie podczas aktywnego spadania: 2× po 120 s, limit 3× po 240 s.
 - Jedna kolumna, osiem klocków, seria punktów 10, 11, 12… i osobny licznik streak.
 - Korekty przez 2 sekundy, również po pominięciu ostatniego równania.
 - Mysz, dotyk, klawiatura: ← / T oznacza ✓, → / F oznacza ✗; spacja / Escape pauzuje.

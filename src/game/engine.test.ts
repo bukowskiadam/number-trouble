@@ -136,7 +136,7 @@ describe('game', () => {
   it('treats a click at the exact landing boundary as missed', () => {
     const game = make();
     const target = game.target;
-    const seconds = (-1 + Math.sqrt(1 + (4 * target) / (0.55 * 180))) * 90;
+    const seconds = (-1 + Math.sqrt(1 + (4 * target) / (0.4 * 240))) * 120;
     game.answer(true, 1, seconds * 1000);
     expect(game.state.missed).toBe(1);
     expect(game.state.phase).toBe('missed');
@@ -201,17 +201,57 @@ describe('game', () => {
     game.advance(301000);
     expect(game.state.phase).toBe('dropping');
   });
+  it.each([
+    ['turtle', 0.4],
+    ['horse', 0.8],
+    ['cheetah', 1.2],
+  ] as const)(
+    'accelerates %s to double at 120 seconds and caps at triple after 240',
+    (tempo, base) => {
+      const game = new Game({ profileId: 'a', level: 1, tempo }, 0, seeded());
+      expect(game.speed).toBe(base);
+      let now = 0;
+      for (let seconds = 1; seconds <= 300; seconds++) {
+        now += 1000;
+        game.advance(now);
+        if (seconds === 60) expect(game.speed).toBeCloseTo(base * 1.5);
+        if (seconds === 120) expect(game.speed).toBeCloseTo(base * 2);
+        if (seconds >= 240) expect(game.speed).toBeCloseTo(base * 3);
+        game.answer(
+          game.state.equation.shown === game.state.equation.result,
+          game.state.blockId,
+          now,
+        );
+        now += 280;
+        game.advance(now);
+      }
+      expect(game.state.activeMs).toBe(300000);
+      expect(game.state.correct).toBe(300);
+      expect(game.state.stack).toHaveLength(0);
+    },
+  );
+  it('integrates movement across the acceleration cap independently of frame size', () => {
+    const a = make(),
+      b = make();
+    a.state.activeMs = b.state.activeMs = 239000;
+    a.advance(2000);
+    for (let i = 1; i <= 200; i++) b.advance(i * 10);
+    // One second averaging the speeds at 239/240 s, then one second at the cap.
+    expect(a.state.y).toBeCloseTo((1.1966666666666668 + 1.2) / 2 + 1.2, 8);
+    expect(a.state.y).toBeCloseTo(b.state.y, 8);
+    expect(a.speed).toBeCloseTo(1.2);
+  });
   it('is frame-rate independent, accelerates and shortens the path', () => {
     const a = make(),
       b = make();
     a.advance(6000);
     for (let i = 1; i <= 600; i++) b.advance(i * 10);
     expect(a.state.y).toBeCloseTo(b.state.y, 8);
-    expect(a.speed).toBeGreaterThan(0.55);
+    expect(a.speed).toBeGreaterThan(0.4);
     a.state.stack.push(trueEquation);
     expect(a.target).toBe(7);
     const fresh = make();
-    expect(fresh.speed).toBe(0.55);
+    expect(fresh.speed).toBe(0.4);
     expect(fresh.state.score).toBe(0);
   });
 });
