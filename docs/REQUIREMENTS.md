@@ -1,6 +1,6 @@
 # Number Trouble — wymagania
 
-Data: 10 października 2026. Status: zakres MVP ustalony, przed implementacją.
+Data: 10 października 2026. Status: MVP zaimplementowane; wyniki weryfikacji i próby sprzętowe w [QA.md](QA.md).
 
 Number Trouble ma pomagać dzieciom ćwiczyć matematykę w grze ze spadającymi
 elementami. MVP obejmuje cztery gotowe poziomy dodawania i odejmowania; mnożenie,
@@ -54,13 +54,13 @@ tempa zostaną dopracowane podczas implementacji i prób gry; nie blokują rozpo
 Przyciski oceniają **prawdziwość równania**, a nie to, czy dziecko chce zachować klocek.
 „Błędny wynik w równaniu” i „błędna odpowiedź dziecka” to dwa różne pojęcia.
 
-| Równanie | Wybór dziecka | Ocena odpowiedzi | Skutek |
-| --- | --- | --- | --- |
-| `2 + 1 = 3` | Dobrze / ✓ | Poprawna | Element znika, przybywa punktów. |
-| `2 + 1 = 3` | Źle / ✗ | Niepoprawna | Element opada i zajmuje miejsce. |
-| `7 − 5 = 4` | Dobrze / ✓ | Niepoprawna | Element opada i zajmuje miejsce. |
-| `7 − 5 = 4` | Źle / ✗ | Poprawna | Element znika, przybywa punktów. |
-| Dowolne | Brak odpowiedzi na czas | Brak odpowiedzi | Element osiada i zajmuje miejsce. |
+| Równanie    | Wybór dziecka           | Ocena odpowiedzi | Skutek                            |
+| ----------- | ----------------------- | ---------------- | --------------------------------- |
+| `2 + 1 = 3` | Dobrze / ✓              | Poprawna         | Element znika, przybywa punktów.  |
+| `2 + 1 = 3` | Źle / ✗                 | Niepoprawna      | Element opada i zajmuje miejsce.  |
+| `7 − 5 = 4` | Dobrze / ✓              | Niepoprawna      | Element opada i zajmuje miejsce.  |
+| `7 − 5 = 4` | Źle / ✗                 | Poprawna         | Element znika, przybywa punktów.  |
+| Dowolne     | Brak odpowiedzi na czas | Brak odpowiedzi  | Element osiada i zajmuje miejsce. |
 
 ## MVP — ustalenia i propozycje szczegółów
 
@@ -114,12 +114,12 @@ W każdym równaniu występują dokładnie dwie liczby i jeden operator.
 Ograniczenia sumy i wyniku w tabeli dotyczą prawdziwego wyniku działania,
 nie celowo błędnej wartości wyświetlonej dziecku.
 
-| Poziom | Działania | Argumenty i prawdziwy wynik | Przykłady prawdziwych równań |
-| --- | --- | --- | --- |
-| 1 — Suma do 10 | Dodawanie | `a ≥ 0`, `b ≥ 0`, `a + b ≤ 10`. | `2 + 1 = 3`, `6 + 4 = 10` |
-| 2 — Dodawanie liczb do 10 | Dodawanie | Każdy składnik od 0 do 10 włącznie; suma od 0 do 20. | `8 + 7 = 15`, `10 + 10 = 20` |
+| Poziom                                  | Działania               | Argumenty i prawdziwy wynik                                                                       | Przykłady prawdziwych równań           |
+| --------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 1 — Suma do 10                          | Dodawanie               | `a ≥ 0`, `b ≥ 0`, `a + b ≤ 10`.                                                                   | `2 + 1 = 3`, `6 + 4 = 10`              |
+| 2 — Dodawanie liczb do 10               | Dodawanie               | Każdy składnik od 0 do 10 włącznie; suma od 0 do 20.                                              | `8 + 7 = 15`, `10 + 10 = 20`           |
 | 3 — Dodawanie i odejmowanie liczb do 10 | Dodawanie i odejmowanie | Oba argumenty od 0 do 10 włącznie; przy odejmowaniu `a ≥ b`. Suma od 0 do 20, różnica od 0 do 10. | `9 + 6 = 15`, `7 − 5 = 2`, `4 − 4 = 0` |
-| 4 — Suma do 100 | Dodawanie | `a ≥ 0`, `b ≥ 0`, `a + b ≤ 100`; dopuszczalne składniki większe niż 10. | `37 + 48 = 85`, `60 + 40 = 100` |
+| 4 — Suma do 100                         | Dodawanie               | `a ≥ 0`, `b ≥ 0`, `a + b ≤ 100`; dopuszczalne składniki większe niż 10.                           | `37 + 48 = 85`, `60 + 40 = 100`        |
 
 Limity są włączne. Poziom 2 dopuszcza sumę większą niż 10, a poziom 3 również
 dopuszcza taką sumę przy dodawaniu. Na poziomie 4 nie obowiązuje ograniczenie
@@ -135,11 +135,11 @@ szczegółem do dopracowania w prototypie.
 Trudność matematyczną wybiera się przez jeden z czterech ustalonych poziomów.
 Tempo jest osobnym wyborem dostępnym na każdym poziomie:
 
-| Tempo | Symbol |
-| --- | --- |
-| Wolno | Żółw |
-| Normalnie | Koń |
-| Szybko | Gepard |
+| Tempo     | Symbol |
+| --------- | ------ |
+| Wolno     | Żółw   |
+| Normalnie | Koń    |
+| Szybko    | Gepard |
 
 Symbole zwierząt są głównym oznaczeniem tempa. Towarzyszą im tłumaczone nazwy
 i etykiety dostępności, aby wybór był jednoznaczny. Zmiana poziomu matematyki
@@ -189,13 +189,13 @@ dobrane w prototypie. Pojemność planszy jest już ustalona na 8 klocków.
 
 Przykład rozliczenia:
 
-| Zdarzenie | Streak po zdarzeniu | Przyznane punkty | Łączny wynik |
-| --- | --- | --- | --- |
-| Pierwsza poprawna odpowiedź | 1 | 10 | 10 |
-| Druga poprawna odpowiedź | 2 | 11 | 21 |
-| Trzecia poprawna odpowiedź | 3 | 12 | 33 |
-| Błąd lub brak odpowiedzi | 0 | 0 | 33 |
-| Poprawna odpowiedź po przerwaniu serii | 1 | 10 | 43 |
+| Zdarzenie                              | Streak po zdarzeniu | Przyznane punkty | Łączny wynik |
+| -------------------------------------- | ------------------- | ---------------- | ------------ |
+| Pierwsza poprawna odpowiedź            | 1                   | 10               | 10           |
+| Druga poprawna odpowiedź               | 2                   | 11               | 21           |
+| Trzecia poprawna odpowiedź             | 3                   | 12               | 33           |
+| Błąd lub brak odpowiedzi               | 0                   | 0                | 33           |
+| Poprawna odpowiedź po przerwaniu serii | 1                   | 10               | 43           |
 
 ### Sterowanie i języki
 
@@ -326,12 +326,12 @@ Pozostałe proponowane wyłączenia z MVP:
 Zakres MVP jest ustalony. Pozostają szczegóły wykonania, które można dobrać podczas
 prac bez rozszerzania funkcjonalności:
 
-| Temat | Zakres dopracowania |
-| --- | --- |
+| Temat           | Zakres dopracowania                                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Parametry tempa | Dobrać prędkości żółwia, konia i geparda, przyspieszanie i ewentualny limit prędkości. Pojemność pozostaje równa 8. |
-| Generator | Dobrać wiarygodne fałszywe wyniki i udział dodawania oraz odejmowania na poziomie 3. |
-| Czytelność | Dopasować wysokość i układ klocków, ruchome przyciski oraz widoczność korekty przy prawie pełnej planszy. |
-| Oprawa | Dobrać konkretne odcienie błękitu, ilustracje i krótkie efekty dźwiękowe. |
+| Generator       | Dobrać wiarygodne fałszywe wyniki i udział dodawania oraz odejmowania na poziomie 3.                                |
+| Czytelność      | Dopasować wysokość i układ klocków, ruchome przyciski oraz widoczność korekty przy prawie pełnej planszy.           |
+| Oprawa          | Dobrać konkretne odcienie błękitu, ilustracje i krótkie efekty dźwiękowe.                                           |
 
 ## Kryteria akceptacji MVP
 
@@ -369,3 +369,29 @@ prac bez rozszerzania funkcjonalności:
 - Aktualizacja nie przerywa partii i zachowuje rekordy oraz profile.
 - Plansza i sterowanie mieszczą się na telefonie, tablecie i komputerze.
 - Podsumowanie poprawnie rozdziela punkty, poprawne oceny, błędne oceny i brak odpowiedzi.
+
+## Parametry wybrane w implementacji MVP
+
+- Prędkość początkowa w logicznych warstwach na sekundę: żółw **0,55**, koń **0,85**,
+  gepard **1,20**. Pusta plansza daje odpowiednio około 14,5 / 9,4 / 6,7 s bez
+  przyspieszenia. Droga wynosi `8 − liczba zajętych miejsc`.
+- Mnożnik prędkości: `1 + min(czas aktywnego spadania w sekundach, 180) / 90`.
+  Maksymalna prędkość to trzykrotność początkowej. Pauza, korekta, opadanie po błędzie
+  i krótka informacja o trafnej ocenie nie zwiększają tego czasu.
+- Korekta: **2000 ms**, opadanie po niej: **400 ms**, informacja o trafnej ocenie:
+  **280 ms**. Dopiero potem powstaje następne równanie.
+- Generator losuje około 50% prawdziwych równań. Na poziomie 3 operatory mają
+  prawdopodobieństwo około 50/50. Fałszywy wynik różni się od prawdziwego o 1–3
+  (poziomy 1–3) lub 1–10 (poziom 4), pozostaje w zakresie danej operacji.
+  Bezpośrednie powtórzenie całego równania jest wykluczone.
+- Plansza używa normalizowanej drogi, niezależnej od pikseli i liczby klatek.
+  Górny zapas 64 px oraz dolny 68 px zostawiają miejsce na przyciski; osiem warstw
+  ma po 22–40 px zależnie od ekranu. Przyciski mają co najmniej 100 × 48 px.
+- Odpowiedź dotykowa jest przyjmowana na `pointerdown`, żeby ruch przycisku pomiędzy
+  dotknięciem i puszczeniem nie gubił trafień. Klawiatura zachowuje standardowe
+  Enter/Space dla przycisków; poza nimi działają skróty opisane w interfejsie.
+- Kolory: tło `#f5f8fb`, główny błękit `#2767ac`, tekst `#263d53`.
+  Lokalne fonty Nunito i DM Sans nawiązują do Czytanek.
+
+To wartości początkowe do ewentualnego dostrojenia po próbach z dziećmi. Nie zmieniają
+ustalonej pojemności, zakresów ani punktacji.

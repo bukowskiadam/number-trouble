@@ -3,13 +3,18 @@
 Zakres MVP jest ustalony. Ten dokument pozwala rozpocząć implementację w nowej
 rozmowie bez dostępu do wywiadu z użytkownikiem.
 
-## Stan przekazania
+## Stan implementacji
 
-- Repozytorium zawiera wymagania, plan, instrukcje pracy i początkowy changelog.
-- Nie ma jeszcze kodu aplikacji, `package.json`, zależności ani testów aplikacji.
-- Etap 0 planu jest zakończony. Do wykonania pozostają etapy 1–5.
-- Nie ma ustalonego miejsca publikacji. Lokalna implementacja i weryfikacja nie wymagają
-  wyboru hostingu; aplikacja ma wspierać publikację w osobnej ścieżce.
+- MVP jest zaimplementowane: React/TypeScript/Vite, silnik gry, profile, rekordy,
+  dwa języki, dźwięki, PWA oraz testy jednostkowe i przeglądarkowe.
+- Projekt ma własne zależności i lockfile, niezależne od Czytanek.
+- Polecenia uruchomienia są w [README](../README.md); wyniki w [QA.md](QA.md).
+- Etapy 1–4 są zaimplementowane. Etap 5 obejmuje automatyczną weryfikację oraz
+  pozostające próby na rzeczywistych urządzeniach i z dziećmi.
+- Publikacja jest skonfigurowana na GitHub Pages pod `/number-trouble/`, przez Actions po pushu do `master`.
+
+Poniższa kolejność i lista prac zachowują kontekst pierwotnego planu. Przy kontynuacji
+nie twórz aplikacji od nowa: zacznij od raportu QA i aktualnego kodu.
 
 ## Kolejność czytania
 
@@ -47,21 +52,21 @@ można dopracować w implementacji bez kolejnej rundy pytań o zatwierdzony zakr
 Czytanki znajdują się obok repozytorium, w `../czytanki` względem jego katalogu
 głównego. Korzystaj z nich jako materiału referencyjnego:
 
-| Wzorzec | Pliki |
-| --- | --- |
-| Zachowanie profili | [PROFILES.md](../../czytanki/docs/PROFILES.md) |
-| Dane i zapis profili | [profiles.ts](../../czytanki/src/profiles.ts), [useProfiles.ts](../../czytanki/src/useProfiles.ts) |
-| Wybór i usuwanie profilu | [ProfileManager.tsx](../../czytanki/src/components/ProfileManager.tsx) |
-| Typografia, kolory, karty i układ | [styles.css](../../czytanki/src/styles.css), [App.tsx](../../czytanki/src/App.tsx) |
-| Okna dialogowe | [Dialog.tsx](../../czytanki/src/components/Dialog.tsx) |
-| Produkcyjna pamięć offline | [build-sw.mjs](../../czytanki/scripts/build-sw.mjs) |
-| Zależności i polecenia | [package.json](../../czytanki/package.json) |
+| Wzorzec                           | Pliki                                                                                              |
+| --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Zachowanie profili                | [PROFILES.md](../../czytanki/docs/PROFILES.md)                                                     |
+| Dane i zapis profili              | [profiles.ts](../../czytanki/src/profiles.ts), [useProfiles.ts](../../czytanki/src/useProfiles.ts) |
+| Wybór i usuwanie profilu          | [ProfileManager.tsx](../../czytanki/src/components/ProfileManager.tsx)                             |
+| Typografia, kolory, karty i układ | [styles.css](../../czytanki/src/styles.css), [App.tsx](../../czytanki/src/App.tsx)                 |
+| Okna dialogowe                    | [Dialog.tsx](../../czytanki/src/components/Dialog.tsx)                                             |
+| Produkcyjna pamięć offline        | [build-sw.mjs](../../czytanki/scripts/build-sw.mjs)                                                |
+| Zależności i polecenia            | [package.json](../../czytanki/package.json)                                                        |
 
 Te odnośniki działają w obecnym układzie katalogów. Przy pracy z samym repozytorium
 Number Trouble wymagania nadal wystarczają do implementacji. Nie kopiuj mechanicznie
 treści edukacyjnych, danych dzieci, tożsamości PWA ani ustawień wdrożenia Czytanek.
 
-## Pierwsze prace
+## Zrealizowana kolejność implementacji
 
 1. Sprawdź stan Git i utwórz projekt React/TypeScript/Vite w istniejącym katalogu,
    zachowując dokumentację. Dodaj npm lockfile, podstawowe polecenia uruchomienia,
@@ -78,12 +83,8 @@ Dobierz samodzielnie początkowe prędkości i przyspieszanie, wiarygodne błęd
 konkretne odcienie niebieskiego oraz szczegóły animacji. Zapisz wybrane parametry
 w dokumentacji. Pojemność 8, zakresy liczb i reguły punktacji są już ustalone.
 
-## Gotowa wiadomość do nowej rozmowy
+## Kontynuacja
 
-> Zaimplementuj pełne MVP Number Trouble w tym repozytorium. Najpierw przeczytaj
-> AGENTS.md, docs/IMPLEMENTATION.md, docs/REQUIREMENTS.md i docs/PLAN.md. Zakres
-> produktu jest już ustalony — przejdź do realizacji, dobierając samodzielnie
-> pozostałe parametry prototypu. Wzoruj profile i stylistykę na sąsiednich Czytankach,
-> zachowując niebieską paletę i niezależne dane. Doprowadź do działającej aplikacji
-> z testami oraz sprawdzonym produkcyjnym trybem offline. Aktualizuj dokumentację
-> i changelog, a na końcu podaj sposób uruchomienia oraz wyniki weryfikacji.
+Przeczytaj QA i plan. Dalsze prace to przede wszystkim rzeczywiste próby dotykowe,
+instalacja na telefonie/tablecie, ocena tempa z dziećmi oraz ewentualne poprawki
+wynikające z tych obserwacji. Publikację obsługuje workflow GitHub Pages opisany w README.

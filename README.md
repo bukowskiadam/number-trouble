@@ -1,40 +1,104 @@
 # Number Trouble
 
-Gra do ćwiczenia matematyki, w MVP skupiona na dodawaniu i odejmowaniu. Dziecko ocenia
-prawdziwość spadających działań, zdobywa punkty i próbuje zapobiec zapełnieniu planszy.
+MVP gry w dodawanie i odejmowanie dla dzieci. Oceń spadające równanie
+za pomocą ruchomych przycisków ✓ i ✗. Trafna ocena daje punkty, a błąd lub brak
+odpowiedzi zapełnia jedno z ośmiu miejsc na planszy.
 
-MVP obejmuje cztery gotowe poziomy: dodawanie z sumą do 10, dodawanie dwóch liczb
-od 0 do 10, dodawanie i odejmowanie liczb od 0 do 10 z nieujemnym wynikiem oraz
-dodawanie z sumą do 100. Mnożenie, dzielenie i własne zakresy pozostają na później.
+## Uruchomienie
 
-Wszystkie poziomy są dostępne od początku z trzema tempami: żółw, koń i gepard.
-MVP obejmuje polski i angielski interfejs oraz profile dzieci z osobnymi rekordami
-dla każdej kombinacji poziomu i tempa. Po błędzie lub braku odpowiedzi gra pokazuje
-poprawne równanie przez około 2 sekundy.
+Wymagany Node.js 22.12+ (zweryfikowano na 24.13) i npm.
 
-Profile działają jak w Czytankach i są zapisywane lokalnie, niezależnie od danych
-aplikacji do czytania. Kolejne poprawne odpowiedzi w serii dają 10, 11, 12 punktów
-itd., z osobnym licznikiem streak. Planowana oprawa nawiązuje do Czytanek, ale używa
-niebieskich i błękitnych kolorów oraz krótkich efektów dźwiękowych z wyciszeniem.
+```sh
+cd number-trouble
+npm ci
+npm run dev
+```
 
-Plansza mieści 8 klocków. MVP ma działać offline po pierwszym pełnym załadowaniu
-i umożliwiać instalację na ekranie głównym jako PWA.
+Vite poda adres lokalny. Projekt jest samodzielny: katalog `czytanki` nie jest
+potrzebny do uruchomienia, budowania ani testów.
 
-Zakres MVP jest ustalony, a plan gotowy do realizacji. Projekt nie zawiera jeszcze implementacji.
+## Wersja produkcyjna i offline
 
-## Dokumentacja
+```sh
+npm run build
+npm run preview
+```
 
-- [Start implementacji](docs/IMPLEMENTATION.md) — stan projektu, wzorce z Czytanek i gotowa wiadomość do nowej rozmowy.
-- [Wymagania](docs/REQUIREMENTS.md) — ustalony zakres MVP, zasady i kryteria akceptacji.
-- [Plan realizacji](docs/PLAN.md) — kolejność prac i kryteria zakończenia etapów.
-- [Instrukcje dla agentów](AGENTS.md) — konwencje pracy i weryfikacji.
-- [Historia zmian](CHANGELOG.md) — wykonane zmiany w projekcie.
+Otwórz adres podany przez Vite. Poczekaj na **„Gotowe do gry offline”**, zanim
+odłączysz sieć. Pamięć obejmuje oba języki, fonty, ikony i cały kod. Dźwięki są
+generowane lokalnie przez Web Audio. Serwer deweloperski nie instaluje service workera.
 
-## Kontynuacja w nowej rozmowie
+Instalację umożliwia przycisk „Zainstaluj grę” albo menu przeglądarki. Na iOS użyj
+Safari → Udostępnij → Dodaj do ekranu głównego. PWA wymaga HTTPS lub localhost.
+Zwykły HTTP przez adres IP w sieci lokalnej pozwala sprawdzić grę, ale nie pełne PWA.
 
-Otwórz katalog `number-trouble` jako projekt i użyj wiadomości z końca
-[instrukcji rozpoczęcia implementacji](docs/IMPLEMENTATION.md). Dokumentacja zawiera
-pełny kontekst potrzebny do rozpoczęcia prac, bez ponownego wywiadu produktowego.
+Do publikacji wystarcza zawartość `dist/` na hostingu statycznym. Względne adresy
+obsługują katalog główny i podścieżkę, np. `/number-trouble/` (z końcowym ukośnikiem).
+Pliku `sw.js` nie należy długotrwale buforować po stronie HTTP. Nowy build otrzymuje
+nowy hash pamięci; aktualizacja czeka na zamknięcie starych kart lub wybranie
+przycisku odświeżenia poza aktywną partią. Profile i rekordy pozostają w localStorage.
 
-Projekt znajduje się obok aplikacji `czytanki`, w osobnym katalogu `number-trouble`.
-Przyjęta nazwa to **Number Trouble**; osobnej polskiej nazwy jeszcze nie ustalono.
+## GitHub Pages
+
+Adres publikacji: [Number Trouble](https://bukowskiadam.github.io/number-trouble/).
+
+Workflow `.github/workflows/deploy.yml` uruchamia się po każdym pushu do `master`
+i ręcznie z zakładki Actions, tak samo jak w Czytankach. Na Node.js 24 wykonuje
+`npm ci`, kontrolę formatowania, testy jednostkowe, build oraz testy Playwright
+produkcyjnej aplikacji, a potem publikuje `dist/` oficjalnymi akcjami GitHub Pages.
+Uprawnienia publikacji są ograniczone do zadania deploy; nie potrzeba osobnego tokenu.
+
+W **Settings → Pages → Source** wybierz **GitHub Actions**. Build pobiera ścieżkę
+z metadanych Pages przez `VITE_BASE_PATH`; manifest i pamięć offline pozostają
+wewnątrz `/number-trouble/`. Lokalnie domyślne adresy pozostają względne.
+
+Sprawdzenie tej samej konfiguracji przed publikacją:
+
+```sh
+VITE_BASE_PATH=/number-trouble/ npm run build
+npm run test:e2e
+```
+
+## Zakres
+
+- Cztery poziomy: suma do 10; dwa składniki 0–10; dodawanie i odejmowanie 0–10
+  z nieujemnym wynikiem; suma do 100.
+- Trzy niezależne tempa: żółw, koń i gepard. Przyspieszanie podczas aktywnego spadania.
+- Jedna kolumna, osiem klocków, seria punktów 10, 11, 12… i osobny licznik streak.
+- Korekty przez 2 sekundy, również po pominięciu ostatniego równania.
+- Mysz, dotyk, klawiatura: ← / T oznacza ✓, → / F oznacza ✗; spacja / Escape pauzuje.
+- Pauza ręczna i automatyczna po ukryciu karty; powrót wymaga wznowienia.
+- Profile z inicjałami, edycją nazwy, potwierdzanym resetem i usuwaniem oraz
+  12 osobnymi rekordami na dziecko. Dane: `number-trouble-profiles-v1`.
+- Polski i angielski, wyciszenie przypisane do profilu, niezależne od Czytanek zasoby PWA.
+- Błędy zapisu nie blokują gry; aplikacja pokazuje informację o pracy tylko w pamięci.
+
+## Weryfikacja
+
+```sh
+npm test
+npx playwright install chromium
+npm run build
+npm run test:e2e
+npm run format:check
+```
+
+Playwright uruchamia produkcyjny build pod `/number-trouble/` na porcie 4175.
+Testy obejmują także wyłączenie sieci i ponowne otwarcie aplikacji. Ustawienie
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` pozwala opcjonalnie użyć własnego Chromium.
+Ikony PNG są gotowe w `public/`; `npm run icons` odtwarza je z własnego SVG za pomocą
+Playwright. Generowanie ikon nie jest potrzebne do zwykłego buildu.
+
+Wyniki i ograniczenia: [QA.md](docs/QA.md). Próby z dziećmi oraz instalacja na
+rzeczywistym telefonie/tablecie pozostają do wykonania; emulacja nie zastępuje tych prób.
+
+## Struktura i dokumentacja
+
+- `src/game/` — generator i silnik czasu, punktacji, korekt i lądowania.
+- `src/profiles.ts` — walidacja, aktualizacje profili i rekordów.
+- `src/i18n.ts` — komplet tekstów PL/EN.
+- `src/components/` — plansza, równania i modalne okna dialogowe.
+- `src/sound.ts`, `src/pwa.ts`, `scripts/build-sw.mjs` — dźwięki i offline.
+- [Wymagania](docs/REQUIREMENTS.md), [plan i stan etapów](docs/PLAN.md),
+  [stan implementacji](docs/IMPLEMENTATION.md), [instrukcje](AGENTS.md),
+  [historia zmian](CHANGELOG.md).

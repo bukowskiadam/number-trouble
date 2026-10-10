@@ -1,6 +1,6 @@
 # Number Trouble — plan realizacji
 
-Data: 10 października 2026. Status: zakres MVP ustalony, plan gotowy do implementacji.
+Data: 10 października 2026. Status: etapy 0–4 zrealizowane; etap 5 — automatyczna weryfikacja i otwarte próby sprzętowe.
 
 Celem jest przygotowanie gry opisanej w [wymaganiach](REQUIREMENTS.md), zaczynając
 od sprawdzenia mechaniki spadania i ruchomych przycisków. Zakres obejmuje osiem
@@ -129,8 +129,12 @@ wyrenderowanych klatek. Tłumaczenia i parametry trudności powinny być osobnym
 Do testowania można wykorzystać Vitest i Playwright, które są używane w `czytanki`.
 Dobór wersji zależności i szczegóły struktury kodu należą do etapu implementacji.
 
-## Najbliższy krok
+## Stan wykonania i następny krok
 
-Rozpocząć implementację od prototypu z jedną kolumną mieszczącą 8 klocków i jednym
-spadającym działaniem naraz. Następnie dostarczyć pozostałe elementy uzgodnionego
-MVP zgodnie z etapami 2–5. Parametry trzech temp dostroić podczas prób gry.
+Etapy 1–4 mają implementację w repozytorium. Etap 5 ma testy generatora, silnika,
+profili, dźwięków oraz testy Playwright produkcyjnej aplikacji. Szczegółowe wyniki
+podaje [QA.md](QA.md). Powyższe punkty pozostają kryteriami poszczególnych etapów.
+
+Nie wykonano instalacji na fizycznym telefonie/tablecie ani wspólnej próby z dziećmi.
+Te sprawdzenia, ocena wygody ruchomych przycisków i ewentualne dostrojenie tempa
+pozostają następnym krokiem. Publikację obsługuje workflow GitHub Pages po pushu do `master`, zgodnie z README.
