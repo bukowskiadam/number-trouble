@@ -10,10 +10,24 @@ Polish and English in `src/release-notes.json`.
 
 ## Unreleased
 
+## v1.1.0 — 2026-10-16
+
+### Added
+
+- Connect Umami Cloud with an application tag for shared-site filtering, native
+  pageviews, a bounded IndexedDB offline queue, retries and cross-tab sender locking.
+  Keep development console-only and verify delivery with an isolated test Website ID.
+
+- Add provider-independent, typed analytics with a console adapter for app usage,
+  settings, profile actions, game outcomes and timing, records, storage and PWA.
+  Exclude profile identity, isolate adapter failures, and document the event contract.
+
 ### Maintenance
 
 - Pin the Node.js 24.13.0 development runtime, declare the supported Node 24 range,
   and document how to select it.
+- Reject unused TypeScript locals and parameters during builds; exclude private local
+  Claude settings from project formatting checks.
 
 ### Changed
 
@@ -34,12 +48,10 @@ Polish and English in `src/release-notes.json`.
   event handling and remove duplicated pause state and unused callbacks/imports.
 - Restore the records table's level column heading in both languages.
 
-### Maintenance
-
-- Reject unused TypeScript locals and parameters during builds; exclude private local
-  Claude settings from project formatting checks.
-
 ### Tests
+
+- Verify analytics deduplication, landing boundaries, pause-aware timing, replay IDs,
+  long-frame misses, confirmed exits, offline operation and failing adapters.
 
 - Cover early-exit record persistence, cancellation, ties and lower scores, profile
   and configuration isolation, and saving all configurations offline in both languages.
@@ -54,6 +66,7 @@ Polish and English in `src/release-notes.json`.
 
 ### Documentation
 
+- Document Umami configuration and offline delivery; include isolated adapter checks in releases.
 - Update the source layout, implementation plan and QA results for the repaired refactor.
 
 ## v1.0.1 — 2026-10-10

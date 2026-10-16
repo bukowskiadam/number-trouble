@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Game, type GameConfig, type GameState } from './engine';
 import { playSound, unlockAudio } from '../sound';
+import { GameTracking } from './tracking';
 
 interface UseGameLoopOptions {
   muted: boolean;
@@ -10,15 +11,19 @@ interface UseGameLoopOptions {
 export function useGameLoop({ muted, onResult }: UseGameLoopOptions) {
   const [game, setGame] = useState<Game | null>(null);
   const [frame, setFrame] = useState<GameState | null>(null);
+  const gameTracking = useRef<GameTracking | null>(null);
   const latest = useRef({ muted, onResult });
   latest.current = { muted, onResult };
 
   // Every engine transition publishes one snapshot and consumes its events once.
   const refresh = useCallback((current: Game) => {
+    gameTracking.current?.resolve(current.drainResolutions());
     for (const event of current.drainEvents()) {
       playSound(event, latest.current.muted);
-      if (event === 'over')
+      if (event === 'over') {
+        gameTracking.current?.end(current.state, 'board_full');
         latest.current.onResult({ ...current.state, stack: [...current.state.stack] });
+      }
     }
     setFrame({ ...current.state, stack: [...current.state.stack] });
   }, []);
@@ -33,16 +38,23 @@ export function useGameLoop({ muted, onResult }: UseGameLoopOptions) {
     [game, refresh],
   );
 
-  const pause = useCallback(() => {
-    if (!game || game.state.phase === 'over') return;
-    game.pause(performance.now());
-    refresh(game);
-  }, [game, refresh]);
+  const pauseWithReason = useCallback(
+    (reason: 'manual' | 'hidden') => {
+      if (!game || game.state.phase === 'over' || game.state.paused) return;
+      game.pause(performance.now());
+      refresh(game);
+      gameTracking.current?.pause(reason);
+    },
+    [game, refresh],
+  );
+
+  const pause = useCallback(() => pauseWithReason('manual'), [pauseWithReason]);
 
   const resume = useCallback(() => {
-    if (!game || game.state.phase === 'over') return;
+    if (!game || game.state.phase === 'over' || !game.state.paused) return;
     if (!latest.current.muted) unlockAudio();
     game.resume(performance.now());
+    gameTracking.current?.resume();
     refresh(game);
   }, [game, refresh]);
 
@@ -59,14 +71,14 @@ export function useGameLoop({ muted, onResult }: UseGameLoopOptions) {
     };
     raf = requestAnimationFrame(tick);
     const visibility = () => {
-      if (document.hidden) pause();
+      if (document.hidden) pauseWithReason('hidden');
     };
     document.addEventListener('visibilitychange', visibility);
     return () => {
       cancelAnimationFrame(raf);
       document.removeEventListener('visibilitychange', visibility);
     };
-  }, [game, refresh, pause]);
+  }, [game, refresh, pauseWithReason]);
 
   useEffect(() => {
     if (!game) return;
@@ -95,9 +107,10 @@ export function useGameLoop({ muted, onResult }: UseGameLoopOptions) {
   }, [game, answer, pause]);
 
   const start = useCallback(
-    (config: GameConfig) => {
+    (config: GameConfig, source: 'start' | 'replay' = 'start') => {
       if (!latest.current.muted) unlockAudio();
       const next = new Game(config, performance.now());
+      gameTracking.current = new GameTracking(next.state, source);
       setGame(next);
       refresh(next);
     },
@@ -105,9 +118,24 @@ export function useGameLoop({ muted, onResult }: UseGameLoopOptions) {
   );
 
   const stop = useCallback(() => {
+    gameTracking.current = null;
     setGame(null);
     setFrame(null);
   }, []);
 
-  return { frame, playing: !!frame && frame.phase !== 'over', start, stop, pause, resume, answer };
+  const finishEarly = useCallback(() => {
+    if (!game || game.state.phase === 'over') return;
+    gameTracking.current?.end(game.state, 'exit');
+  }, [game]);
+
+  return {
+    frame,
+    playing: !!frame && frame.phase !== 'over',
+    start,
+    stop,
+    pause,
+    resume,
+    answer,
+    finishEarly,
+  };
 }

@@ -174,3 +174,21 @@ rekordów, dla profilu, poziomu i tempa rozpoczętej partii. Niższy wynik ani r
 nie zmieniają rekordu ani jego daty; anulowanie wyjścia pozostawia grę w pauzie.
 Zaktualizowano komunikaty PL/EN i testy przeglądarkowe, w tym zapis offline
 oraz odczyt po przeładowaniu. Wyniki w [QA.md](QA.md).
+
+## Tracking — 16 października 2026
+
+Dodano niezależny od dostawcy, typowany interfejs i adapter `console.log`.
+Zaimplementowano zdarzenia użycia aplikacji, ustawień, profili, przebiegu gry,
+rozstrzygnięć odpowiedzi, rekordów oraz zapisu i PWA. Silnik zachowuje osobne
+rozstrzygnięcia także przy opóźnionych klatkach; błędy adaptera nie blokują gry.
+Plan pomiaru, zakres danych i instrukcję wymiany adaptera opisuje [TRACKING.md](TRACKING.md).
+Podłączono Umami Cloud ze wspólnym Website ID GitHub Pages i tagiem `number-trouble`.
+Adapter używa oficjalnego API, mapuje ekrany na odsłony i zachowuje kontrakt zdarzeń.
+Dodano trwałą, ograniczoną kolejkę offline, ponawianie i blokadę nadawcy między kartami.
+Development i obce hosty pozostają przy konsoli. Szczegóły w [TRACKING.md](TRACKING.md).
+
+## Wydanie 1.1.0 — 16 października 2026
+
+Przygotowano wydanie obejmujące tracking z Umami i kolejką offline oraz wcześniej
+zapisane poprawki cyklu gry, pełne talie działań i rekordy przy wyjściu. Zaktualizowano
+metadane, changelog i historię PL/EN. Ponowne testy wersji opisuje [QA.md](QA.md).

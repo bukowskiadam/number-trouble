@@ -59,6 +59,7 @@ Nie używamy ponownie wydanych numerów i nie przesuwamy istniejących tagów.
    npm test
    VITE_BASE_PATH=/number-trouble/ npm run build
    npm run test:e2e
+   VITE_BASE_PATH=/number-trouble/ npm run test:umami
    git diff --check
    ```
 

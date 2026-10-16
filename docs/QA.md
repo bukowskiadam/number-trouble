@@ -240,3 +240,87 @@ Nowa partia tasuje pełny zbiór od początku. Wersja aplikacji pozostaje `1.0.1
 Nie wykonywano nowych prób na fizycznych urządzeniach. Zmiana obejmuje potwierdzone
 zakończenie z menu pauzy; nie dodaje zapisu przy zamknięciu karty przeglądarki.
 Wersja pozostaje `1.0.1`; zmiany zapisano w `Unreleased`.
+
+## Tracking — 16 października 2026
+
+- `npm test`: **45/45** testów zaliczonych na Node.js 24.13.0, w tym siedem nowych
+  testów kontraktu i adaptera, izolacji błędów synchronicznych/asynchronicznych,
+  czasu bez pauz, podwójnych odpowiedzi, granicy lądowania, ośmiu pominięć
+  w jednej klatce, jednokrotnego zakończenia i osobnych identyfikatorów powtórek.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony; 28 zasobów PWA,
+  TypeScript bez błędów. Nie dodano zależności ani zewnętrznych zasobów.
+- `npm run test:e2e`: **20/20** scenariuszy zaliczonych w Chromium: 17 dotychczasowych
+  i trzy nowe scenariusze trackingu. Następnie dodano i uruchomiono test instalacji:
+  `npm run test:e2e -- tests/tracking.spec.ts -g 'install prompt'`: **1/1** zaliczony.
+  Łącznie zweryfikowano **21 scenariuszy**. Testy wymagały wyjścia poza sandbox
+  ze względu na otwarcie lokalnego portu 4175 (pierwsza próba: `listen EPERM`).
+- Nowe testy przeglądarkowe sprawdzają emisję do konsoli, start i powtórkę,
+  odrzucenie podwójnego kliknięcia, powody pauzy, wznowienie, anulowanie wyjścia,
+  potwierdzone wyjście, pełną planszę i rekord bez zdarzenia dla gorszego wyniku.
+- Potwierdzono zdarzenia ustawień bez ponownej emisji tej samej wartości,
+  tworzenie profilu bez nazwy i trwałego ID w payloadzie, pojedyncze otwarcie
+  aplikacji, przejścia ekranów i tracking po produkcyjnym przeładowaniu offline.
+- Adapter konsolowy rzucający wyjątki nie powoduje błędów strony ani przerwania gry.
+  Instalacja: instrukcja, accepted/dismissed/failed oraz osobne `appinstalled`
+  zostały sprawdzone przez syntetyczne zdarzenia przeglądarki.
+- Cały dotychczasowy zakres testów gry, profili, rekordów, PL/EN, telefonów/tabletu,
+  historii, aktualizacji PWA, axe-core i 24 konfiguracji offline nadal przechodzi.
+- `npm run format:check`, `npx tsc -b` i `git diff --check`: zaliczone.
+
+Nie wykonywano nowych prób na fizycznych urządzeniach ani instalacji przez systemowy
+interfejs telefonu. Tracking obecnie zapisuje tylko do konsoli; nie weryfikowano
+zewnętrznej usługi ani dostarczania danych po zamknięciu karty. Plan i dokładna
+semantyka zdarzeń są w [TRACKING.md](TRACKING.md). Wersja aplikacji pozostaje `1.0.1`.
+
+## Umami Cloud i trwała kolejka offline — 16 października 2026
+
+- `npm test`: **53/53** testy zaliczone. Nowe przypadki obejmują mapowanie
+  odsłon/zdarzeń, tag i czas wystąpienia, dozwolony host produkcyjny, ponawianie,
+  HTTP 429, timeout, kolejność potwierdzeń oraz ograniczenia kolejki pamięciowej.
+- `npm run test:umami`: **5/5** scenariuszy Chromium zaliczonych z testowym
+  Website ID i przechwyconymi żądaniami API. Wykorzystano prawdziwy IndexedDB.
+  Sprawdzono odsłony bez duplikatów, tag/app, brak query/hash i nazw dzieci,
+  offline → przeładowanie → online, zachowanie pierwotnego czasu, brak usuwania
+  po HTTP 429, jednego nadawcę dla dwóch kart, niedostępny IndexedDB oraz
+  limit 1000 wpisów i wygasanie po 7 dniach.
+- Pierwszy przebieg testów przeglądarkowych adaptera wykrył błędny kontekst
+  wywołania natywnego `fetch`. Poprawiono powiązanie z `globalThis`; końcowy
+  przebieg z pięcioma scenariuszami przeszedł w całości.
+- Polecenie `test:umami` po testach przywróciło zwykły build produkcyjny.
+  Sprawdzono, że wynikowy JS zawiera właściwe Website ID i host GitHub Pages,
+  a nie testowe ID. Build TypeScript/Vite i 28 zasobów PWA: zaliczone.
+- `npm run test:e2e`: **21/21** dotychczasowych scenariuszy zaliczonych;
+  pięć scenariuszy Umami jest celowo pomijanych w tym przebiegu i zostało
+  zaliczonych osobno przez `test:umami`. Łącznie **26** scenariuszy przeglądarkowych.
+- `npm run format:check`, `npx tsc -b`, `git diff --check`: zaliczone.
+- Workflow GitHub Pages wykonuje izolowane testy adaptera przed publikacją.
+  Nie dodano zależności, SDK ani dodatkowego skryptu sieciowego do HTML.
+
+Nie publikowano zmian ani nie wysyłano testów do prawdziwego konta Umami.
+Widoczność zdarzeń we właściwym dashboardzie będzie można potwierdzić po publikacji.
+Testy nie zastępują prób na telefonie, rzeczywistej instalacji ani sprawdzenia
+blokad analityki w używanych przeglądarkach. Brak gwarancji dostarczenia dokładnie
+raz i ograniczenia kolejki są opisane w [TRACKING.md](TRACKING.md).
+
+## Wydanie v1.1.0 — 16 października 2026
+
+Weryfikacja wykonana ponownie po zmianie numeru wydania na `1.1.0`.
+
+- `npm run format:check`, `git diff --check`: zaliczone.
+- `npm test`: **53/53**, w tym zgodność wersji pakietu, obu pól lockfile,
+  zamkniętego changelogu oraz historii PL/EN.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony; TypeScript bez błędów,
+  28 zasobów offline. Produkcyjny adapter ma właściwe Website ID i host GitHub Pages.
+- `npm run test:e2e`: **21/21** scenariuszy zaliczonych; pięć testów adaptera
+  wymaga osobnego buildu i zostało uruchomionych kolejnym poleceniem.
+- `VITE_BASE_PATH=/number-trouble/ npm run test:umami`: **5/5** scenariuszy zaliczonych;
+  po próbie odtworzono zwykły build produkcyjny. Łącznie **26** scenariuszy Chromium.
+- Sprawdzono historię i stopkę v1.1.0, oba języki, aktualizację z v1.0.1,
+  jednorazowe okno nowości, zachowanie profili i rekordów oraz historię offline.
+  Przejrzano treść nowych polskich i angielskich opisów wydania.
+- Sekcja `Unreleased` pozostaje pusta. Wydanie obejmuje tracking Umami, kolejkę
+  offline oraz wcześniejsze poprawki cyklu gry, pełne talie i rekord przy wyjściu.
+
+Nie wykonano nowych prób sprzętowych. Żądania Umami były przechwytywane przez testy;
+nie potwierdzano odbioru danych w rzeczywistym dashboardzie. Kontrola opublikowanej
+strony następuje po zakończeniu workflow GitHub Pages.

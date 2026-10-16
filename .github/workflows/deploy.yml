@@ -43,6 +43,10 @@ jobs:
         run: npm run build && npm run test:e2e
         env:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+      - name: Test Umami adapter with an isolated Website ID
+        run: npm run test:umami
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { tracking } from './tracking';
 export type OfflineStatus = 'preparing' | 'ready' | 'unavailable';
 export function usePwa() {
   const [status, setStatus] = useState<OfflineStatus>('preparing');
@@ -48,10 +49,19 @@ export function usePwa() {
   }, [attempt]);
   function update() {
     if (!waiting) return;
+    tracking.track('update_requested', {});
     navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), {
       once: true,
     });
     waiting.postMessage('ACTIVATE');
   }
-  return { status, waiting, update, retry: () => setAttempt((n) => n + 1) };
+  return {
+    status,
+    waiting,
+    update,
+    retry: () => {
+      tracking.track('offline_retry_requested', {});
+      setAttempt((n) => n + 1);
+    },
+  };
 }

@@ -1,5 +1,26 @@
 [
   {
+    "version": "1.1.0",
+    "pl": {
+      "title": "Więcej różnorodności i zachowane rekordy",
+      "changes": [
+        "Działania pojawiają się w losowej kolejności bez powtórzeń, dopóki nie wykorzystasz całego zestawu dla danego poziomu.",
+        "Potwierdzenie wcześniejszego zakończenia gry zapisuje Twój wynik, jeśli jest nowym rekordem.",
+        "Poprawiliśmy powrót do menu, zmianę nazwy profilu i pauzę po ukryciu karty.",
+        "Dodaliśmy statystyki korzystania z gry, bez nazw i identyfikatorów profili dzieci. Zdarzenia z gry offline mogą zostać wysłane po odzyskaniu połączenia."
+      ]
+    },
+    "en": {
+      "title": "More variety and records worth keeping",
+      "changes": [
+        "Equations appear in a shuffled order without repeats until you have used the full set for your level.",
+        "Confirming an early end to a game saves your score if it is a new record.",
+        "We improved returning to the menu, renaming profiles and pausing when the tab is hidden.",
+        "We added game usage statistics without children’s profile names or identifiers. Events recorded offline can be sent when the connection returns."
+      ]
+    }
+  },
+  {
     "version": "1.0.1",
     "pl": {
       "title": "Spokojniejsze tempo i historia zmian",

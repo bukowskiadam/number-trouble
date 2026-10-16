@@ -24,8 +24,13 @@ import { EndScreen } from './components/EndScreen';
 import { Footer } from './components/Footer';
 import { ReleaseHistory } from './components/ReleaseHistory';
 import { hasNewVersion } from './releases';
+import { tracking } from './tracking';
+import type { GameState } from './game/engine';
 
-type InstallEvent = Event & { prompt: () => Promise<void> };
+type InstallEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+};
 type Confirmation = { kind: 'delete' | 'reset'; id: string };
 
 export function App() {
@@ -53,18 +58,91 @@ export function App() {
       event.preventDefault();
       setInstall(event as InstallEvent);
     };
+    const installed = () => tracking.track('app_installed', {});
     window.addEventListener('beforeinstallprompt', listener);
-    return () => window.removeEventListener('beforeinstallprompt', listener);
+    window.addEventListener('appinstalled', installed);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', listener);
+      window.removeEventListener('appinstalled', installed);
+    };
   }, []);
 
   const game = useGameLoop({
     muted: profile.settings.muted,
-    onResult: (result) => {
-      setStore((s) => saveResult(s, result.profileId, result.level, result.tempo, result.score));
-    },
+    onResult: saveGameResult,
   });
 
-  function changeSettings(change: Partial<Settings>) {
+  const screen = game.frame ? (game.frame.phase === 'over' ? 'summary' : 'game') : page;
+  const observed = useRef<{
+    launched: boolean;
+    screen?: typeof screen;
+    storageError?: boolean;
+    offline?: typeof pwa.status;
+    history?: typeof releaseHistory;
+  }>({ launched: false });
+
+  useEffect(() => {
+    const previous = observed.current;
+    if (!previous.launched) {
+      previous.launched = true;
+      tracking.track('app_opened', {
+        language: profile.settings.language,
+        online: navigator.onLine,
+        displayMode: window.matchMedia('(display-mode: standalone)').matches
+          ? 'standalone'
+          : 'browser',
+      });
+    }
+    if (previous.screen !== screen) {
+      previous.screen = screen;
+      tracking.track('screen_viewed', { screen });
+    }
+    if (previous.storageError !== storageError) {
+      previous.storageError = storageError;
+      tracking.track('storage_status_changed', { available: !storageError });
+    }
+    if (previous.offline !== pwa.status) {
+      previous.offline = pwa.status;
+      tracking.track('offline_status_changed', { status: pwa.status });
+    }
+    if (previous.history !== releaseHistory) {
+      previous.history = releaseHistory;
+      if (releaseHistory)
+        tracking.track('release_history_opened', {
+          source: releaseHistory === 'updates' ? 'update' : 'manual',
+        });
+    }
+  }, [screen, storageError, pwa.status, releaseHistory, profile.settings.language]);
+
+  function saveGameResult(result: GameState) {
+    const previousScore = store.profiles.find((p) => p.id === result.profileId)?.records[
+      recordKey(result.level, result.tempo)
+    ]?.score;
+    if (previousScore === undefined || result.score > previousScore) {
+      tracking.track('record_improved', {
+        level: result.level,
+        tempo: result.tempo,
+        score: result.score,
+        previousScore: previousScore ?? null,
+      });
+    }
+    setStore((s) => saveResult(s, result.profileId, result.level, result.tempo, result.score));
+  }
+
+  function openHelp(source: 'help' | 'start') {
+    tracking.track('help_opened', { source: source === 'start' ? 'before_game' : 'menu' });
+    setHelp(source);
+  }
+
+  function changeSettings<K extends keyof Settings>(setting: K, value: Settings[K]) {
+    const previous = profile.settings[setting];
+    if (previous === value) return;
+    // The key and values come from the same Settings property.
+    tracking.track('setting_changed', { setting, previous, value } as {
+      [P in keyof Settings]: { setting: P; previous: Settings[P]; value: Settings[P] };
+    }[keyof Settings]);
+    const change = { [setting]: value };
+
     setStore((s) =>
       updateProfile(s, profile.id, (p) => ({
         ...p,
@@ -79,6 +157,8 @@ export function App() {
   }
 
   function switchProfile(id: string) {
+    if (!store.profiles.some((p) => p.id === id)) return;
+    if (id !== profile.id) tracking.track('profile_changed', { action: 'selected' });
     setStore((s) => ({ ...s, activeId: id }));
     navigate('play');
   }
@@ -86,13 +166,15 @@ export function App() {
   function addProfile(name: string) {
     if (!name.trim()) return;
     const added = createProfile(name);
+    tracking.track('profile_changed', { action: 'created' });
     added.settings.language = profile.settings.language;
     setStore((s) => ({ ...s, profiles: [...s.profiles, added], activeId: added.id }));
     navigate('play');
   }
 
   function renameProfile(name: string) {
-    if (!name.trim()) return;
+    if (!name.trim() || name.trim().slice(0, 30) === profile.name) return;
+    tracking.track('profile_changed', { action: 'renamed' });
     setStore((s) =>
       updateProfile(s, profile.id, (p) => ({ ...p, name: name.trim().slice(0, 30) })),
     );
@@ -101,6 +183,12 @@ export function App() {
   function confirmProfileChange() {
     if (!confirmation) return;
     const { kind, id } = confirmation;
+    if (
+      !store.profiles.some((p) => p.id === id) ||
+      (kind === 'delete' && store.profiles.length === 1)
+    )
+      return;
+    tracking.track('profile_changed', { action: kind === 'delete' ? 'deleted' : 'reset' });
     setStore((s) =>
       kind === 'delete'
         ? removeProfile(s, id)
@@ -109,15 +197,18 @@ export function App() {
     setConfirmation(null);
   }
 
-  function handleStart() {
+  function handleStart(source: 'start' | 'replay' = 'start') {
     bestBefore.current =
       profile.records[recordKey(profile.settings.level, profile.settings.tempo)]?.score;
     setHelp(null);
-    game.start({
-      profileId: profile.id,
-      level: profile.settings.level,
-      tempo: profile.settings.tempo,
-    });
+    game.start(
+      {
+        profileId: profile.id,
+        level: profile.settings.level,
+        tempo: profile.settings.tempo,
+      },
+      source,
+    );
     setPage('play');
     (document.activeElement as HTMLElement)?.blur();
     window.scrollTo({ top: 0 });
@@ -131,19 +222,29 @@ export function App() {
   function handleLeave() {
     const result = game.frame;
     if (result && result.phase !== 'over') {
-      setStore((s) => saveResult(s, result.profileId, result.level, result.tempo, result.score));
+      game.finishEarly();
+      saveGameResult(result);
     }
     handleHome();
   }
 
   function handleMuteToggle() {
     if (profile.settings.muted) unlockAudio();
-    changeSettings({ muted: !profile.settings.muted });
+    changeSettings('muted', !profile.settings.muted);
   }
 
-  function handleInstallClick() {
+  async function handleInstallClick() {
+    tracking.track('install_requested', { method: install ? 'prompt' : 'instructions' });
     if (install) {
-      void install.prompt().then(() => setInstall(null));
+      const prompt = install;
+      setInstall(null);
+      try {
+        await prompt.prompt();
+        const { outcome } = await prompt.userChoice;
+        tracking.track('install_prompt_result', { outcome });
+      } catch {
+        tracking.track('install_prompt_result', { outcome: 'failed' });
+      }
     } else {
       setInstallHelp(true);
     }
@@ -159,14 +260,14 @@ export function App() {
         page={page}
         onNavigate={navigate}
         playing={game.playing}
-        onHelp={() => setHelp('help')}
+        onHelp={() => openHelp('help')}
       />
       <div className="workspace">
         <Topbar
           t={t}
           profile={profile}
           onMuteToggle={handleMuteToggle}
-          onLanguageChange={(language) => changeSettings({ language })}
+          onLanguageChange={(language) => changeSettings('language', language)}
         />
         {storageError && (
           <p className="storage-warning" role="alert">
@@ -179,9 +280,9 @@ export function App() {
               t={t}
               profile={profile}
               best={best}
-              onLevelChange={(level) => changeSettings({ level })}
-              onTempoChange={(tempo) => changeSettings({ tempo })}
-              onStart={() => setHelp('start')}
+              onLevelChange={(level) => changeSettings('level', level)}
+              onTempoChange={(tempo) => changeSettings('tempo', tempo)}
+              onStart={() => openHelp('start')}
             />
           )}
           {!game.frame && page === 'profiles' && (
@@ -206,7 +307,7 @@ export function App() {
               frame={game.frame}
               bestBefore={bestBefore.current}
               profile={profile}
-              onReplay={handleStart}
+              onReplay={() => handleStart('replay')}
               onHome={handleHome}
             />
           )}
@@ -247,7 +348,7 @@ export function App() {
           <p className="small-note">{t.keyboard}</p>
           <button
             className="primary dialog-action"
-            onClick={help === 'start' ? handleStart : () => setHelp(null)}
+            onClick={help === 'start' ? () => handleStart() : () => setHelp(null)}
           >
             <Play size={18} />
             {help === 'start' ? t.letsPlay : t.close}

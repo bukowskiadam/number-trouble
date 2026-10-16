@@ -80,6 +80,24 @@ npm run test:e2e
 - Polski i angielski, wyciszenie przypisane do profilu, niezależne od Czytanek zasoby PWA.
 - Błędy zapisu nie blokują gry; aplikacja pokazuje informację o pracy tylko w pamięci.
 
+## Tracking
+
+Aplikacja ma typowany interfejs trackingu i adapter Umami Cloud. Produkcyjny build
+na `bukowskiadam.github.io` korzysta ze wspólnego Website ID
+`a8bb101f-a5d7-4013-8c92-6a64b63e3cf2`. W Umami wybierz filtr **Tag = number-trouble**,
+aby zobaczyć tylko tę aplikację. Odsłony i zdarzenia mają ten sam tag;
+zdarzenia dodatkowo zawierają `app: number-trouble`.
+
+Offline zdarzenia czekają w IndexedDB i są wysyłane po odzyskaniu sieci lub kolejnym
+otwarciu aplikacji. Kolejka mieści 1000 wpisów przez maksymalnie 7 dni. Lokalny
+development i inne hosty pozostają przy konsoli z prefiksem `[tracking]`.
+Nazwy i trwałe identyfikatory dzieci nie trafiają do zdarzeń.
+
+[Plan, konfiguracja i kontrakt](docs/TRACKING.md) opisują zdarzenia, filtrowanie,
+ponawianie i ograniczenia. Opcjonalne zmienne buildu są w `.env.example`.
+Nie jest potrzebny skrypt Umami w HTML ani klucz API. `npm run test:umami` testuje
+adapter z przechwyconym API i testowym ID, a potem przywraca normalny build.
+
 ## Weryfikacja
 
 ```sh

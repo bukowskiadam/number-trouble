@@ -23,11 +23,22 @@ export type GameState = GameConfig & {
   award: number;
 };
 export type GameEvent = 'correct' | 'wrong' | 'missed' | 'over';
+export type EquationResolution = {
+  blockId: number;
+  outcome: Exclude<GameEvent, 'over'>;
+  operator: Equation['operator'];
+  equationTrue: boolean;
+  responseMs: number;
+  score: number;
+  streak: number;
+};
 // Pure elapsed-time simulation. No browser APIs, pixels or animation frames.
 export class Game {
   state: GameState;
   private lastTime: number;
   private equations: EquationDeck;
+  private resolutions: EquationResolution[] = [];
+  private blockStartedActiveMs = 0;
   events: GameEvent[] = [];
   constructor(config: GameConfig, now = 0, random: Random = Math.random) {
     this.lastTime = now;
@@ -96,7 +107,7 @@ export class Game {
         s.streak = 0;
         s.phase = 'missed';
         s.phaseMs = 0;
-        this.events.push('missed');
+        this.resolve('missed');
       } else {
         const duration = s.phase === 'correct' ? 280 : s.phase === 'dropping' ? 400 : CORRECTION_MS;
         const used = Math.min(remaining, duration - s.phaseMs);
@@ -125,6 +136,7 @@ export class Game {
     }
     s.equation = this.equations.next();
     s.blockId++;
+    this.blockStartedActiveMs = s.activeMs;
     s.y = 0;
     s.phase = 'falling';
     s.phaseMs = 0;
@@ -141,12 +153,12 @@ export class Game {
       s.correct++;
       s.bestStreak = Math.max(s.bestStreak, s.streak);
       s.phase = 'correct';
-      this.events.push('correct');
+      this.resolve('correct');
     } else {
       s.mistakes++;
       s.streak = 0;
       s.phase = 'correction';
-      this.events.push('wrong');
+      this.resolve('wrong');
     }
   }
   pause(now: number) {
@@ -156,6 +168,25 @@ export class Game {
   resume(now: number) {
     this.lastTime = now;
     this.state.paused = false;
+  }
+  private resolve(outcome: EquationResolution['outcome']) {
+    const s = this.state;
+    this.events.push(outcome);
+    // Capture at the transition, including when one frame resolves several blocks.
+    this.resolutions.push({
+      blockId: s.blockId,
+      outcome,
+      operator: s.equation.operator,
+      equationTrue: s.equation.result === s.equation.shown,
+      responseMs: s.activeMs - this.blockStartedActiveMs,
+      score: s.score,
+      streak: s.streak,
+    });
+  }
+  drainResolutions() {
+    const resolutions = this.resolutions;
+    this.resolutions = [];
+    return resolutions;
   }
   drainEvents() {
     const events = this.events;
