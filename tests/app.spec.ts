@@ -169,6 +169,10 @@ test('profiles, independent settings, rename, confirmations, deletion and storag
   await expect(page.getByRole('button', { name: /Usuń profil:/ })).toBeDisabled();
   await page.getByLabel('Imię lub pseudonim', { exact: true }).fill('Ala');
   await page.getByRole('button', { name: 'Zapisz imię' }).click();
+  await expect(page.locator('.current-profile')).toContainText('Ala');
+  await page.reload();
+  await page.getByRole('button', { name: 'Profile', exact: true }).click();
+  await expect(page.getByLabel('Imię lub pseudonim', { exact: true })).toHaveValue('Ala');
   await page.getByLabel('Imię nowego dziecka').fill('Maja');
   await page.getByRole('button', { name: 'Dodaj profil' }).click();
   await expect(page.locator('.current-profile')).toContainText('Maja');
@@ -263,6 +267,7 @@ test('production offline relaunch, all 24 configurations, profile creation, soun
   await expect(offline.locator('.best-preview')).toContainText('10');
   await offline.getByRole('button', { name: 'Records', exact: true }).click();
   await expect(offline.locator('tbody td')).toHaveCount(12);
+  await expect(offline.getByRole('columnheader').first()).toHaveText('Level');
   expect((await new AxeBuilder({ page: offline }).analyze()).violations).toEqual([]);
 });
 
@@ -381,4 +386,120 @@ test('tablet corrections preserve true results; smallest phone keeps controls vi
   await page.clock.runFor(500);
   const after = await page.getByTestId('active-block').boundingBox();
   expect(after!.y).toBeGreaterThan(before!.y);
+});
+
+test('leaving can be cancelled; confirmed exit discards the game and restart has fresh listeners', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await installClock(page);
+  await start(page);
+  await answer(page, true);
+  await page.clock.runFor(288);
+  await page.getByRole('link', { name: 'Number Trouble', exact: true }).click();
+  await expect(page.getByTestId('score')).toHaveText('10');
+  await expect(page.getByRole('button', { name: 'Profile', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Pauza', exact: true }).click();
+  await page.getByRole('button', { name: 'Wróć do wyboru', exact: true }).click();
+  await page.getByRole('button', { name: 'Anuluj', exact: true }).last().click();
+  await expect(page.getByRole('heading', { name: 'Chwila oddechu' })).toBeVisible();
+  await page.clock.runFor(1000);
+  await expect(page.getByTestId('score')).toHaveText('10');
+  await page.getByRole('button', { name: 'Wracam do gry', exact: true }).last().click();
+  await answer(page, true);
+  await page.clock.runFor(288);
+  await expect(page.getByTestId('score')).toHaveText('21');
+  await page.getByRole('button', { name: 'Pauza', exact: true }).click();
+  await page.getByRole('button', { name: 'Wróć do wyboru', exact: true }).click();
+  await page.getByRole('button', { name: 'Zakończ partię', exact: true }).click();
+  await expect(page.locator('.best-preview')).toContainText('Jeszcze przed Tobą');
+  await page.keyboard.press('ArrowLeft');
+  await page.clock.fastForward(60000);
+  await expect(page.locator('.board')).toHaveCount(0);
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).profiles[0].records, key),
+  ).toEqual({});
+
+  await start(page);
+  await expect(page.getByTestId('score')).toHaveText('0');
+  const before = await page.getByTestId('active-block').getAttribute('style');
+  await page.clock.runFor(500);
+  expect(await page.getByTestId('active-block').getAttribute('style')).not.toBe(before);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect(page.getByRole('heading', { name: 'Chwila oddechu' })).toBeVisible();
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: false });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.keyboard.press('Escape');
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.locator('.board')).not.toHaveAttribute('data-phase', 'falling');
+});
+
+for (const destination of ['Zagraj', 'Profile', 'Rekordy', 'brand']) {
+  test(`summary navigation to ${destination} clears the completed game`, async ({ page }) => {
+    await page.goto('./');
+    await installClock(page);
+    await start(page);
+    await finish(page);
+    if (destination === 'brand') {
+      await page.getByRole('link', { name: 'Number Trouble', exact: true }).click();
+    } else {
+      await page.getByRole('button', { name: destination, exact: true }).click();
+    }
+    await expect(page.locator('.summary')).toHaveCount(0);
+    if (destination === 'Profile') {
+      await expect(page.getByRole('heading', { name: 'Kto dziś liczy?' })).toBeVisible();
+    } else if (destination === 'Rekordy') {
+      await expect(page.getByRole('columnheader').first()).toHaveText('Poziom');
+      await expect(page.locator('tbody td').first()).toHaveText('0');
+    } else {
+      await expect(page.locator('.best-preview')).toContainText('0');
+    }
+  });
+}
+
+test('completed records stay with the starting profile and configuration across replay and reset', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await installClock(page);
+  await page.getByRole('button', { name: 'Profile', exact: true }).click();
+  await page.getByLabel('Imię nowego dziecka').fill('Maja');
+  await page.getByRole('button', { name: 'Dodaj profil' }).click();
+  await page.locator('.level-card').nth(3).click();
+  await page.locator('.tempo-card').nth(2).click();
+  await start(page);
+  await answer(page, true);
+  await page.clock.runFor(288);
+  await page.getByLabel('Język', { exact: true }).selectOption('en');
+  await page.getByRole('button', { name: 'Mute sounds', exact: true }).click();
+  await finish(page, true);
+  await expect(page.locator('.summary .eyebrow')).toHaveText('New record!');
+  const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+  expect(saved.profiles[0].records).toEqual({});
+  expect(Object.keys(saved.profiles[1].records)).toEqual(['4-cheetah']);
+  expect(saved.profiles[1].records['4-cheetah'].score).toBe(10);
+  await page.getByRole('button', { name: 'Play again', exact: true }).click();
+  await answer(page, true, true);
+  await page.clock.runFor(288);
+  await finish(page, true);
+  await expect(page.locator('.summary .eyebrow')).toHaveText('8 of 8 spaces');
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).profiles[1].records, key),
+  ).toEqual(saved.profiles[1].records);
+  await page.getByRole('button', { name: 'Profiles', exact: true }).click();
+  await page.getByLabel('Name or nickname', { exact: true }).fill('  Maria  ');
+  await page.getByRole('button', { name: 'Save name', exact: true }).click();
+  await expect(page.locator('.current-profile')).toContainText('Maria');
+  await page.getByRole('button', { name: 'Reset records', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset records', exact: true }).last().click();
+  await page.reload();
+  const reset = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+  expect(reset.profiles[0]).toEqual(saved.profiles[0]);
+  expect(reset.profiles[1]).toEqual({ ...saved.profiles[1], name: 'Maria', records: {} });
 });

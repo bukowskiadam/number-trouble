@@ -91,6 +91,7 @@ export const text = {
       'Profile i rekordy są zapisane tylko w tej przeglądarce. Usunięcie jej danych je wyczyści.',
     storageError:
       'Nie można zapisać danych. Możesz grać, ale zmiany profili, ustawień i rekordów nie zostaną zachowane po zamknięciu aplikacji.',
+    recordLevel: 'Poziom',
     recordsHint: 'Cztery poziomy × trzy tempa. Każdy rekord to osobne małe zwycięstwo.',
     emptyRecord: 'Brak rekordu',
     offlineReady: 'Gotowe do gry offline',
@@ -200,6 +201,7 @@ export const text = {
       'Profiles and records are saved only in this browser. Clearing browser data removes them.',
     storageError:
       'Unable to save data. You can play, but profile, settings and record changes will not be kept after closing the app.',
+    recordLevel: 'Level',
     recordsHint: 'Four levels × three speeds. Each record is a little victory of its own.',
     emptyRecord: 'No record',
     offlineReady: 'Ready to play offline',

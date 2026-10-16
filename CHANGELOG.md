@@ -10,6 +10,33 @@ Polish and English in `src/release-notes.json`.
 
 ## Unreleased
 
+### Changed
+
+- Split the app into focused screen and layout components, a persistent store hook,
+  and a game loop with instance-scoped animation and browser listeners.
+
+### Fixed
+
+- Restore navigation after finished or abandoned games, persisted profile renaming,
+  automatic visibility pause, and upgrade notices based on the previous launch version.
+- Save completed results using the game's original profile, level and tempo; centralize
+  event handling and remove duplicated pause state and unused callbacks/imports.
+- Restore the records table's level column heading in both languages.
+
+### Maintenance
+
+- Reject unused TypeScript locals and parameters during builds; exclude private local
+  Claude settings from project formatting checks.
+
+### Tests
+
+- Cover summary navigation, cancellation and abandonment, restarted game listeners,
+  persisted renaming, profile/configuration record isolation, replay ties and resets.
+
+### Documentation
+
+- Update the source layout, implementation plan and QA results for the repaired refactor.
+
 ## v1.0.1 — 2026-10-10
 
 ### Added

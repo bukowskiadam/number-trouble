@@ -151,3 +151,45 @@ Teksty obu języków przejrzano. Dotychczasowe ograniczenia prób sprzętowych p
   po aktualizacji z `1.0.0`, zachowanie profili i rekordów oraz historię offline.
 - Przejrzano oba tłumaczenia i zrzut historii na ekranie 320 × 568.
 - Próby na fizycznych urządzeniach i z dziećmi pozostają niewykonane.
+
+## Naprawa refaktoru — 16 października 2026
+
+### Stan początkowy
+
+- Testy jednostkowe: **33/33**, build zaliczony, mimo regresji integracji komponentów.
+- Produkcyjne e2e: **4/10** zaliczone. Sześć nieudanych scenariuszy dotyczyło
+  powrotu z podsumowania, zapisu imienia, kolejnych partii offline, automatycznej
+  pauzy, aktualizacji po opuszczeniu gry i okna nowości.
+- Przegląd kodu wykazał także niedziałającą nawigację z podsumowania, błędny nagłówek
+  pierwszej kolumny rekordów, zdublowany stan pauzy i obsługę zdarzeń silnika,
+  zbędne importy, parametry komponentów i nieużywaną funkcję aktualizacji gry.
+
+### Wykonane poprawki i wynik
+
+- Zachowano osobne komponenty ekranów i układu. `App` łączy widoki i akcje,
+  `useGameLoop` obsługuje partię oraz sprząta animację i nasłuchiwanie zdarzeń,
+  a `useStore` zachowuje poprzednią wersję oddzielnie od nowego znacznika zapisu.
+- Pauza ma jedno źródło w silniku. Zdarzenia dźwięków i zakończenia przechodzą przez
+  wspólną obsługę. Rekord zapisuje istniejąca funkcja `saveResult`, z profilem,
+  poziomem i tempem ukończonej partii.
+- Zmiana imienia zapisuje profil, a nawigacja i zatwierdzone wyjście czyszczą partię.
+  Logo nie przerywa aktywnej gry. Nagłówek rekordów ma osobne tłumaczenia PL/EN.
+- `npm test`: **33/33** zaliczone.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony, w tym kontrola
+  `noUnusedLocals` i `noUnusedParameters`; **28 zasobów** w pamięci PWA.
+- `npm run test:e2e`: **16/16** zaliczone. Zachowano dotychczasowe scenariusze,
+  w tym wszystkie 24 konfiguracje offline, aktualizację service workera i historię PL/EN.
+- Nowe scenariusze obejmują wszystkie przyciski nawigacji i logo z podsumowania,
+  anulowanie wyjścia, odrzucenie nieukończonego wyniku, ruch i obsługę zdarzeń
+  po ponownym starcie oraz zachowanie rekordów, ustawień i profili przy remisie,
+  zmianie nazwy i resecie. Test zmiany imienia dodatkowo sprawdza zapis po przeładowaniu.
+- axe-core: dotychczasowe kontrole ekranu startowego, korekty, rekordów i historii
+  zmian przeszły bez naruszeń.
+- Przejrzano zrzuty ekranu startowego na komputerze, telefonu z siedmioma klockami,
+  gry na 320 × 568, korekty na tablecie i angielskiej historii zmian na telefonie.
+- `npm run format:check` i `git diff --check`: zaliczone. Prywatne, ignorowane przez Git
+  ustawienia `.claude/settings.local.json` wyłączono z kontroli formatowania projektu.
+
+Nie wykonywano nowych prób na fizycznych urządzeniach ani odsłuchu. Automatyka
+obejmuje Chromium; wcześniejsze ograniczenia dotyczące Safari/iOS i prób z dziećmi
+pozostają aktualne. Wersja aplikacji nadal wynosi `1.0.1`.

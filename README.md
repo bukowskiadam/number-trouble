@@ -84,6 +84,9 @@ npm run test:e2e
 npm run format:check
 ```
 
+Build sprawdza również nieużywane importy, zmienne, funkcje lokalne i parametry
+(`noUnusedLocals`, `noUnusedParameters`).
+
 Playwright uruchamia produkcyjny build pod `/number-trouble/` na porcie 4175.
 Testy obejmują także wyłączenie sieci i ponowne otwarcie aplikacji. Ustawienie
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` pozwala opcjonalnie użyć własnego Chromium.
@@ -108,10 +111,14 @@ opisuje [procedura wydania](docs/RELEASE.md).
 
 ## Struktura i dokumentacja
 
-- `src/game/` — generator i silnik czasu, punktacji, korekt i lądowania.
+- `src/App.tsx` — łączenie widoków, nawigacja i akcje aplikacji.
+- `src/game/` — generator, silnik czasu, punktacji, korekt i lądowania oraz
+  `useGameLoop.ts`, który obsługuje animację, klawiaturę, pauzę i cykl życia partii.
 - `src/profiles.ts` — walidacja, aktualizacje profili i rekordów.
+- `src/useStore.ts` — odczyt i zapis danych oraz zachowanie poprzedniej wersji aplikacji.
 - `src/i18n.ts` — komplet tekstów PL/EN.
-- `src/components/` — plansza, równania i modalne okna dialogowe.
+- `src/components/` — ekran startowy, gra, podsumowanie, profile, rekordy, nawigacja,
+  stopka, plansza i okna dialogowe. Formularze profili przechowują lokalnie edytowane teksty.
 - `src/sound.ts`, `src/pwa.ts`, `scripts/build-sw.mjs` — dźwięki i offline.
 - [Wymagania](docs/REQUIREMENTS.md), [plan i stan etapów](docs/PLAN.md),
   [stan implementacji](docs/IMPLEMENTATION.md), [instrukcje](AGENTS.md),

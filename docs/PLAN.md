@@ -147,3 +147,12 @@ pozostają następnym krokiem. Publikację obsługuje workflow GitHub Pages po p
 Dodano wersję i historię w stopce, polskie i angielskie opisy wydań oraz wspólny dla
 profili znacznik ostatniej uruchomionej wersji. Aktualizacja pokazuje nowości jednokrotnie.
 Zasady wydawania są w [RELEASE.md](RELEASE.md); zwykłe zadania pozostają w `Unreleased`.
+
+## Uporządkowanie refaktoru — 16 października 2026
+
+Zachowano podział widoków na osobne komponenty. Cykl życia partii obsługuje
+`useGameLoop`, a trwały zapis `useStore`. Naprawiono nawigację po zakończeniu
+i przerwaniu gry, zapis imienia, automatyczną pauzę i powiadomienie o aktualizacji.
+Usunięto nieużywane zależności komponentów i zdublowany stan pauzy; build pilnuje
+nieużywanych importów oraz parametrów. Dodano testy regresji integracji widoków.
+Wyniki aktualnego sprawdzenia i ograniczenia są w [QA.md](QA.md).
