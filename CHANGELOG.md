@@ -17,6 +17,9 @@ Polish and English in `src/release-notes.json`.
 
 ### Changed
 
+- Deal every allowed operation once per shuffled, game-local deck; balance true/false
+  answers and cap identical-answer runs at four across deck boundaries.
+
 - Split the app into focused screen and layout components, a persistent store hook,
   and a game loop with instance-scoped animation and browser listeners.
 
@@ -34,6 +37,11 @@ Polish and English in `src/release-notes.json`.
   Claude settings from project formatting checks.
 
 ### Tests
+
+- Verify exhaustive deck coverage, answer balance and run limits across refills,
+  false-result bounds, constant random sources and independent game decks.
+- Make browser correction checks use displayed equations instead of assuming the old
+  random generator produces fixed operands and answer order.
 
 - Cover summary navigation, cancellation and abandonment, restarted game listeners,
   persisted renaming, profile/configuration record isolation, replay ties and resets.

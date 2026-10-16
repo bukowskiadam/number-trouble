@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Game, CORRECTION_MS } from './engine';
-import { generate, levels, equationKey, type Equation } from './generator';
+import { type Equation } from './generator';
 function seeded(seed = 42) {
   return () => {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
@@ -10,60 +10,26 @@ function seeded(seed = 42) {
 const trueEquation: Equation = { a: 2, b: 1, operator: '+', result: 3, shown: 3 };
 const falseEquation: Equation = { a: 7, b: 5, operator: '−', result: 2, shown: 4 };
 const make = () => new Game({ profileId: 'a', level: 1, tempo: 'turtle' }, 0, seeded());
-describe('generator', () => {
-  for (const level of levels)
-    it(`generates varied, valid level ${level} equations`, () => {
-      const random = seeded(),
-        seen = new Set<string>();
-      let previous: Equation | undefined;
-      let truths = 0;
-      let plus = 0;
-      let minus = 0;
-      let highest = 0;
-      let bigOperand = false;
-      for (let i = 0; i < 15000; i++) {
-        const e = generate(level, random, previous);
-        expect(equationKey(e)).not.toBe(previous && equationKey(previous));
-        for (const value of [e.a, e.b, e.result, e.shown]) {
-          expect(Number.isInteger(value)).toBe(true);
-          expect(value).toBeGreaterThanOrEqual(0);
-        }
-        expect(e.result).toBe(e.operator === '+' ? e.a + e.b : e.a - e.b);
-        if (level === 1) expect(e.result).toBeLessThanOrEqual(10);
-        if (level === 2 || level === 3) {
-          expect(e.a).toBeLessThanOrEqual(10);
-          expect(e.b).toBeLessThanOrEqual(10);
-        }
-        const max = level === 4 ? 100 : level === 1 || e.operator === '−' ? 10 : 20;
-        expect(e.shown).toBeLessThanOrEqual(max);
-        expect(e.result).toBeLessThanOrEqual(max);
-        if (level !== 3) expect(e.operator).toBe('+');
-        if (e.operator === '−') {
-          minus++;
-          expect(e.a).toBeGreaterThanOrEqual(e.b);
-        } else plus++;
-        if (e.shown === e.result) truths++;
-        seen.add(String(e.result));
-        highest = Math.max(highest, e.result);
-        bigOperand ||= e.a > 10 || e.b > 10;
-        previous = e;
-      }
-      expect(truths / 15000).toBeGreaterThan(0.45);
-      expect(truths / 15000).toBeLessThan(0.55);
-      expect(highest).toBe(level === 4 ? 100 : level === 1 ? 10 : 20);
-      expect(generate(level, () => 0).result).toBe(0);
-      if (level === 3) {
-        expect(minus).toBeGreaterThan(6000);
-        expect(plus).toBeGreaterThan(6000);
-      }
-      if (level === 4) expect(bigOperand).toBe(true);
-    });
-  it('avoids immediate repeats even for a constant RNG', () => {
-    const previous = generate(1, () => 0);
-    expect(generate(1, () => 0, previous)).not.toEqual(previous);
-  });
-});
 describe('game', () => {
+  it('keeps a complete deck per game and resets it for a new game', () => {
+    const game = make();
+    const first = structuredClone(game.state.equation);
+    const other = make();
+    for (let cycle = 0; cycle < 2; cycle++) {
+      const seen = new Set<string>();
+      for (let i = 0; i < 66; i++) {
+        const e = game.state.equation;
+        seen.add(`${e.a}${e.operator}${e.b}`);
+        const now = (cycle * 66 + i) * 280;
+        game.answer(e.shown === e.result, game.state.blockId, now);
+        game.advance(now + 280);
+      }
+      expect(seen.size).toBe(66);
+    }
+    expect(other.state.equation).toEqual(first);
+    expect(make().state.equation).toEqual(first);
+    expect(game.state.correct).toBe(132);
+  });
   for (const [equation, answer, correct] of [
     [trueEquation, true, true],
     [trueEquation, false, false],

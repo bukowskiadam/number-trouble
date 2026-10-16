@@ -1,4 +1,4 @@
-import { generate, type Equation, type Level, type Random, type Tempo } from './generator';
+import { EquationDeck, type Equation, type Level, type Random, type Tempo } from './generator';
 export const CAPACITY = 8;
 export const CORRECTION_MS = 2000;
 export const BASE_SPEED: Record<Tempo, number> = { turtle: 0.4, horse: 0.8, cheetah: 1.2 };
@@ -27,16 +27,14 @@ export type GameEvent = 'correct' | 'wrong' | 'missed' | 'over';
 export class Game {
   state: GameState;
   private lastTime: number;
+  private equations: EquationDeck;
   events: GameEvent[] = [];
-  constructor(
-    config: GameConfig,
-    now = 0,
-    private random: Random = Math.random,
-  ) {
+  constructor(config: GameConfig, now = 0, random: Random = Math.random) {
     this.lastTime = now;
+    this.equations = new EquationDeck(config.level, random);
     this.state = {
       ...config,
-      equation: generate(config.level, random),
+      equation: this.equations.next(),
       blockId: 1,
       y: 0,
       stack: [],
@@ -125,7 +123,7 @@ export class Game {
       this.events.push('over');
       return;
     }
-    s.equation = generate(s.level, this.random, s.equation);
+    s.equation = this.equations.next();
     s.blockId++;
     s.y = 0;
     s.phase = 'falling';

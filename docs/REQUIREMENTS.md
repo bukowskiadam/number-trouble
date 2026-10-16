@@ -104,9 +104,14 @@ Wiele kolumn i kilka jednocześnie spadających działań nie należą do wybran
 - Celowo błędny wynik zawsze różni się od prawdziwego i jest nieujemną liczbą całkowitą.
 - Proponowany zakres fałszywego wyniku odpowiada zakresowi prawdziwych wyników danej operacji
   na wybranym poziomie, tak aby sam zakres nie zdradzał odpowiedzi.
-- Prawdziwe i fałszywe równania mają zbliżony udział, bez przewidywalnego przeplatania.
+- Działania pochodzą z tasowanej talii wszystkich dozwolonych par `a`, `b` i operatorów.
+  Każda pozycja występuje raz przed ponownym tasowaniem; `2 + 3` i `3 + 2` są osobne.
+- Liczby prawdziwych i fałszywych równań w talii różnią się najwyżej o jeden.
+  Kolejność jest losowa z limitem czterech jednakowych odpowiedzi z rzędu, także na styku talii.
 - Wygląd, pozycja i prędkość elementu nie zdradzają prawdziwości równania.
-- Należy ograniczyć bezpośrednie powtórzenia tego samego równania, gdy zakres na to pozwala.
+- To samo działanie nie występuje bezpośrednio po sobie, również na styku talii
+  i niezależnie od wyświetlanego wyniku. Nowa partia zaczyna od nowej talii;
+  nie zapamiętujemy wykorzystanych działań pomiędzy partiami.
 
 ### Ustalone cztery poziomy MVP
 
@@ -127,8 +132,8 @@ pojedynczego składnika do 10. Rodzic lub dziecko wybiera gotowy poziom; w MVP
 nie konfiguruje osobno operatorów ani zakresów argumentów i wyników.
 
 Ustalono: wszystkie cztery poziomy są dostępne od początku, bez odblokowywania.
-Dobór wiarygodnych błędnych wyników i proporcji operatorów na poziomie 3 pozostaje
-szczegółem do dopracowania w prototypie.
+Na poziomie 3 pełna talia zawiera 121 dodawań i 66 odejmowań. Proporcja operatorów
+wynika z liczby dozwolonych działań; nie wyrównujemy jej dodatkowymi powtórzeniami.
 
 ### Trudność i tempo
 
@@ -329,7 +334,7 @@ prac bez rozszerzania funkcjonalności:
 | Temat           | Zakres dopracowania                                                                                                 |
 | --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Parametry tempa | Dobrać prędkości żółwia, konia i geparda, przyspieszanie i ewentualny limit prędkości. Pojemność pozostaje równa 8. |
-| Generator       | Dobrać wiarygodne fałszywe wyniki i udział dodawania oraz odejmowania na poziomie 3.                                |
+| Generator       | Ocenić po próbach z dziećmi wiarygodność fałszywych wyników i limit serii T/F.                                      |
 | Czytelność      | Dopasować wysokość i układ klocków, ruchome przyciski oraz widoczność korekty przy prawie pełnej planszy.           |
 | Oprawa          | Dobrać konkretne odcienie błękitu, ilustracje i krótkie efekty dźwiękowe.                                           |
 
@@ -381,10 +386,17 @@ prac bez rozszerzania funkcjonalności:
   i krótka informacja o trafnej ocenie nie zwiększają tego czasu.
 - Korekta: **2000 ms**, opadanie po niej: **400 ms**, informacja o trafnej ocenie:
   **280 ms**. Dopiero potem powstaje następne równanie.
-- Generator losuje około 50% prawdziwych równań. Na poziomie 3 operatory mają
-  prawdopodobieństwo około 50/50. Fałszywy wynik różni się od prawdziwego o 1–3
-  (poziomy 1–3) lub 1–10 (poziom 4), pozostaje w zakresie danej operacji.
-  Bezpośrednie powtórzenie całego równania jest wykluczone.
+- Talia ma **66 / 121 / 187 / 5151** działań dla poziomów 1–4. Tasowanie obejmuje
+  wszystkie dozwolone uporządkowane pary i operatory. Po wyczerpaniu talii powstaje
+  nowa, z ponownie ustaloną kolejnością i wynikami T/F. Początek nowej talii nie
+  powtarza ostatniego działania poprzedniej. Każda partia ma własną talię w pamięci.
+- Liczby T/F różnią się najwyżej o jeden w pełnej talii; przy nieparzystej liczbie
+  pozycji losujemy, która odpowiedź przeważa. Limit serii wynosi **4**, również
+  między taliami. Losowanie odpowiedzi uwzględnia pozostałe liczby T/F oraz możliwość
+  ułożenia reszty bez przekroczenia limitu, więc nie zostawia długiej jednolitej końcówki.
+  Krótki fragment talii nie musi mieć równej liczby T/F.
+- Fałszywy wynik różni się od prawdziwego o 1–3 (poziomy 1–3) lub 1–10 (poziom 4)
+  i pozostaje w zakresie danej operacji. Dopuszczalne błędne wyniki są losowane równomiernie.
 - Plansza używa normalizowanej drogi, niezależnej od pikseli i liczby klatek.
   Górny zapas 64 px oraz dolny 68 px zostawiają miejsce na przyciski; osiem warstw
   ma po 22–40 px zależnie od ekranu. Przyciski mają co najmniej 100 × 48 px.

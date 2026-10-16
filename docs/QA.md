@@ -193,3 +193,29 @@ Teksty obu języków przejrzano. Dotychczasowe ograniczenia prób sprzętowych p
 Nie wykonywano nowych prób na fizycznych urządzeniach ani odsłuchu. Automatyka
 obejmuje Chromium; wcześniejsze ograniczenia dotyczące Safari/iOS i prób z dziećmi
 pozostają aktualne. Wersja aplikacji nadal wynosi `1.0.1`.
+
+## Pełne talie działań — 16 października 2026
+
+- Node.js **24.13.0**; `npm test`: **38/38** testów zaliczonych.
+- Testy generatora obejmują trzy pełne cykle każdego poziomu dla trzech ziaren
+  oraz stałych wartości losowych 0 i 0,999999: **82 875 równań**. Sprawdzają
+  dokładne liczby unikalnych działań (66 / 121 / 187 / 5151), zakresy, arytmetykę,
+  zerowe i graniczne wyniki oraz maksymalną różnicę fałszywego wyniku.
+- W każdej talii liczby T/F różnią się najwyżej o jeden; żadna seria nie przekracza
+  czterech, także między taliami i przy stałym źródle losowości. Osobne testy wymuszają
+  powtórzenie na styku talii i sprawdzają jego usunięcie bez utraty działań.
+- Sprawdzono ponowne tasowanie, brak mechanicznego przeplatania T/F, pełne cykle
+  w silniku gry oraz niezależność talii i rozpoczęcie nowej partii.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony; 28 zasobów PWA.
+- `npm run test:e2e`: końcowo **16/16** scenariuszy zaliczonych, w tym wszystkie
+  24 konfiguracje offline, profile, oba języki, pauza, punktacja, korekty i historia zmian.
+  Pierwszy przebieg: 15/16; test korekt zakładał konkretne równania starego generatora.
+  Zmieniono go na odczyt bieżącego działania i wyszukiwanie T/F w najwyżej pięciu klockach.
+  Testy przeglądarkowe wymagały uruchomienia poza sandboxem ze względu na lokalny port 4175.
+- Przejrzano zrzuty korekty na tablecie i planszy na telefonie 320 × 568; wyniki
+  i przyciski pozostają czytelne. Kontrole axe-core przeszły bez naruszeń.
+- `npm run format:check` i `git diff --check`: zaliczone.
+
+Nie wykonywano prób na fizycznych urządzeniach ani z dziećmi. Pełne pokrycie dotyczy
+cyklu w obrębie jednej partii; krótka partia może zakończyć się przed wyczerpaniem talii.
+Nowa partia tasuje pełny zbiór od początku. Wersja aplikacji pozostaje `1.0.1`.

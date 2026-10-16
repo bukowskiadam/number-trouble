@@ -156,3 +156,13 @@ i przerwaniu gry, zapis imienia, automatyczną pauzę i powiadomienie o aktualiz
 Usunięto nieużywane zależności komponentów i zdublowany stan pauzy; build pilnuje
 nieużywanych importów oraz parametrów. Dodano testy regresji integracji widoków.
 Wyniki aktualnego sprawdzenia i ograniczenia są w [QA.md](QA.md).
+
+## Pełne talie działań — 16 października 2026
+
+Zastąpiono niezależne losowanie liczb taliami wszystkich dozwolonych działań.
+Każda partia ma własną talię, tasowaną ponownie po wyczerpaniu. Dodano równowagę
+T/F (różnica najwyżej jeden) i limit czterech jednakowych odpowiedzi, także na styku
+talii, oraz wykluczenie bezpośrednich powtórzeń działań pomiędzy taliami.
+Na poziomie 3 proporcja operatorów wynika z pełnego zbioru: 121 dodawań i 66 odejmowań.
+Testy sprawdzają pełne cykle, zakresy błędnych wyników, skrajne źródła losowości
+oraz oddzielne talie kolejnych partii. Wyniki w [QA.md](QA.md).

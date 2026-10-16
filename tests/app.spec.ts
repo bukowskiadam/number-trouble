@@ -14,14 +14,17 @@ async function start(page: Page, english = false) {
     .click();
   await expect(page.getByTestId('active-block')).toBeVisible();
 }
-async function answer(page: Page, correct: boolean, english = false) {
+async function currentEquation(page: Page) {
   await expect(page.locator('.board')).toHaveAttribute('data-phase', 'falling');
   const value = await page.locator('.falling-equation').innerText();
   const parts = value.match(/(\d+)\s*([+−])\s*(\d+)\s*=\s*(\d+)/)!;
-  const isTrue =
-    (parts[2] === '+'
-      ? Number(parts[1]) + Number(parts[3])
-      : Number(parts[1]) - Number(parts[3])) === Number(parts[4]);
+  const result =
+    parts[2] === '+' ? Number(parts[1]) + Number(parts[3]) : Number(parts[1]) - Number(parts[3]);
+  const shown = Number(parts[4]);
+  return { result, shown, isTrue: result === shown };
+}
+async function answer(page: Page, correct: boolean, english = false) {
+  const { isTrue } = await currentEquation(page);
   const yes = correct ? isTrue : !isTrue;
   await page
     .getByRole('button', {
@@ -354,20 +357,31 @@ test('tablet corrections preserve true results; smallest phone keeps controls vi
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto('./');
   await installClock(page);
-  await page.evaluate(() => {
-    Math.random = () => 0.9;
-  });
   await start(page);
+  const findEquation = async (truth: boolean) => {
+    // The answer run limit guarantees the desired kind within five blocks.
+    for (let i = 0; i < 5; i++) {
+      const equation = await currentEquation(page);
+      if (equation.isTrue === truth) return equation;
+      await answer(page, true);
+      await page.clock.runFor(288);
+    }
+    throw new Error(`No equation with truth=${truth} within five blocks`);
+  };
+  const trueEquation = await findEquation(true);
   await answer(page, false);
+  await expect(page.locator('.board')).toHaveAttribute('data-phase', 'correction');
   await expect(page.locator('.falling-equation del')).toHaveCount(0);
-  await expect(page.locator('.falling-equation strong')).toHaveText('10');
+  await expect(page.locator('.falling-equation strong')).toHaveText(String(trueEquation.result));
   await expect(
     page.getByRole('status').filter({ hasText: 'To równanie było prawdziwe' }),
   ).toBeVisible();
   await page.clock.runFor(2416);
+  const falseEquation = await findEquation(false);
   await answer(page, false);
-  await expect(page.locator('.falling-equation del')).toHaveText('9');
-  await expect(page.locator('.falling-equation strong')).toHaveText('10');
+  await expect(page.locator('.board')).toHaveAttribute('data-phase', 'correction');
+  await expect(page.locator('.falling-equation del')).toHaveText(String(falseEquation.shown));
+  await expect(page.locator('.falling-equation strong')).toHaveText(String(falseEquation.result));
   await page.screenshot({ path: 'test-results/correction-tablet.png', fullPage: true });
   expect(
     (await new AxeBuilder({ page }).analyze()).violations.map((v) => ({
