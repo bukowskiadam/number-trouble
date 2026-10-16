@@ -10,6 +10,11 @@ Polish and English in `src/release-notes.json`.
 
 ## Unreleased
 
+### Tests
+
+- Allow 30 seconds for exhaustive equation-deck checks on slower CI runners,
+  preserving every random source, cycle and assertion.
+
 ## v1.1.0 — 2026-10-16
 
 ### Added

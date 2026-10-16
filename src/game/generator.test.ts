@@ -12,6 +12,7 @@ const key = (e: Equation) => `${e.a}${e.operator}${e.b}`;
 
 describe('equation decks', () => {
   for (const level of levels) {
+    // Five random sources and three complete decks include 77,265 level-4 equations.
     it(`covers every level ${level} operation once per cycle with balanced, bounded answers`, () => {
       for (const random of [seeded(42), seeded(17), seeded(1234), () => 0, () => 0.999999]) {
         const generator = new EquationDeck(level, random);
@@ -55,7 +56,7 @@ describe('equation decks', () => {
           expect(seen.has('2+3') && seen.has('3+2')).toBe(true);
         }
       }
-    });
+    }, 30_000);
 
     it(`prevents a repeated operation at a level ${level} cycle boundary`, () => {
       let value = 0;

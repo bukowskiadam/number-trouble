@@ -324,3 +324,12 @@ Weryfikacja wykonana ponownie po zmianie numeru wydania na `1.1.0`.
 Nie wykonano nowych prób sprzętowych. Żądania Umami były przechwytywane przez testy;
 nie potwierdzano odbioru danych w rzeczywistym dashboardzie. Kontrola opublikowanej
 strony następuje po zakończeniu workflow GitHub Pages.
+
+### Korekta limitu czasu CI dla v1.1.0
+
+Pierwszy workflow publikacji (`38897466513`) zatrzymał się na teście pełnej talii
+poziomu 4: około 11 sekund przy domyślnym limicie 5 sekund. Pozostałe **52/53**
+testy zaliczono. Test obejmuje 77 265 działań (pięć źródeł losowości × trzy talie),
+więc ustawiono dla testów pełnych talii limit 30 sekund bez ograniczania pokrycia.
+Lokalne `npm test` po tej zmianie: **53/53**; formatowanie i `git diff --check` zaliczone.
+Poprawka dotyczy wyłącznie testu i dokumentacji; wersja aplikacji pozostaje `1.1.0`.
