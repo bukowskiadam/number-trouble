@@ -10,6 +10,11 @@ Polish and English in `src/release-notes.json`.
 
 ## Unreleased
 
+### Maintenance
+
+- Pin the Node.js 24.13.0 development runtime, declare the supported Node 24 range,
+  and document how to select it.
+
 ### Changed
 
 - Split the app into focused screen and layout components, a persistent store hook,

@@ -6,7 +6,8 @@ odpowiedzi zapełnia jedno z ośmiu miejsc na planszy.
 
 ## Uruchomienie
 
-Wymagany Node.js 22.12+ (zweryfikowano na 24.13) i npm.
+Wymagany jest Node.js 24.13.x i npm. Menedżery wersji obsługujące plik `.nvmrc`
+ustawią właściwą wersję poleceniem `nvm use`.
 
 ```sh
 cd number-trouble
