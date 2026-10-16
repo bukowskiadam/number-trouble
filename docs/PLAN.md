@@ -166,3 +166,11 @@ talii, oraz wykluczenie bezpośrednich powtórzeń działań pomiędzy taliami.
 Na poziomie 3 proporcja operatorów wynika z pełnego zbioru: 121 dodawań i 66 odejmowań.
 Testy sprawdzają pełne cykle, zakresy błędnych wyników, skrajne źródła losowości
 oraz oddzielne talie kolejnych partii. Wyniki w [QA.md](QA.md).
+
+## Rekord przy wcześniejszym zakończeniu — 16 października 2026
+
+Potwierdzenie wyjścia z pauzy zapisuje wynik zgodnie z dotychczasowymi zasadami
+rekordów, dla profilu, poziomu i tempa rozpoczętej partii. Niższy wynik ani remis
+nie zmieniają rekordu ani jego daty; anulowanie wyjścia pozostawia grę w pauzie.
+Zaktualizowano komunikaty PL/EN i testy przeglądarkowe, w tym zapis offline
+oraz odczyt po przeładowaniu. Wyniki w [QA.md](QA.md).

@@ -219,3 +219,24 @@ pozostają aktualne. Wersja aplikacji nadal wynosi `1.0.1`.
 Nie wykonywano prób na fizycznych urządzeniach ani z dziećmi. Pełne pokrycie dotyczy
 cyklu w obrębie jednej partii; krótka partia może zakończyć się przed wyczerpaniem talii.
 Nowa partia tasuje pełny zbiór od początku. Wersja aplikacji pozostaje `1.0.1`.
+
+## Rekord przy wcześniejszym zakończeniu — 16 października 2026
+
+- `npm test`: **38/38** testów zaliczonych na Node.js 24.13.0.
+- `VITE_BASE_PATH=/number-trouble/ npm run build`: zaliczony; 28 zasobów PWA.
+- `npm run test:e2e`: **17/17** scenariuszy zaliczonych w Chromium.
+- Potwierdzone wyjście z pauzy zapisuje 21 punktów, rekord przetrwa przeładowanie,
+  a nowa partia zaczyna od zera. Anulowanie wyjścia pozostawia grę w pauzie i nie zapisuje wyniku.
+- Osobny scenariusz sprawdza wyniki 0 → 21 → 10 → 21 → 33 dla drugiego profilu,
+  poziomu 4 i tempa geparda. Słabszy wynik oraz remis zachowują rekord i jego datę;
+  pozostały profil i inne konfiguracje pozostają niezależne.
+- Bez dostępu do sieci zapisano rekordy przez wcześniejsze wyjście we wszystkich
+  24 kombinacjach poziomu, tempa i języka. Po przeładowaniu zachowano 12 rekordów
+  właściwego profilu. Sprawdzono nowe komunikaty potwierdzenia w PL/EN.
+- Dotychczasowe scenariusze pełnego zakończenia, punktacji, pauzy, korekt, telefonów,
+  aktualizacji PWA i historii zmian nadal przechodzą, wraz z kontrolami axe-core.
+- `npm run format:check` i `git diff --check`: zaliczone.
+
+Nie wykonywano nowych prób na fizycznych urządzeniach. Zmiana obejmuje potwierdzone
+zakończenie z menu pauzy; nie dodaje zapisu przy zamknięciu karty przeglądarki.
+Wersja pozostaje `1.0.1`; zmiany zapisano w `Unreleased`.

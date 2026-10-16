@@ -71,6 +71,8 @@ npm run test:e2e
   Przyspieszanie podczas aktywnego spadania: 2× po 120 s, limit 3× po 240 s.
 - Jedna kolumna, osiem klocków, seria punktów 10, 11, 12… i osobny licznik streak.
 - Korekty przez 2 sekundy, również po pominięciu ostatniego równania.
+- Zapis rekordu także przy wcześniejszym zakończeniu przez pauzę → powrót do wyboru
+  → potwierdzenie zakończenia. Niższy wynik i remis zachowują dotychczasowy rekord.
 - Mysz, dotyk, klawiatura: ← / T oznacza ✓, → / F oznacza ✗; spacja / Escape pauzuje.
 - Pauza ręczna i automatyczna po ukryciu karty; powrót wymaga wznowienia.
 - Profile z inicjałami, edycją nazwy, potwierdzanym resetem i usuwaniem oraz

@@ -128,6 +128,14 @@ export function App() {
     setLeaving(false);
   }
 
+  function handleLeave() {
+    const result = game.frame;
+    if (result && result.phase !== 'over') {
+      setStore((s) => saveResult(s, result.profileId, result.level, result.tempo, result.score));
+    }
+    handleHome();
+  }
+
   function handleMuteToggle() {
     if (profile.settings.muted) unlockAudio();
     changeSettings({ muted: !profile.settings.muted });
@@ -265,7 +273,7 @@ export function App() {
             <button className="secondary" onClick={() => setLeaving(false)}>
               {t.cancel}
             </button>
-            <button className="danger" onClick={handleHome}>
+            <button className="danger" onClick={handleLeave}>
               {t.confirmLeave}
             </button>
           </div>

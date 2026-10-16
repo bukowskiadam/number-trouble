@@ -255,7 +255,10 @@ Obsługa profili ma odpowiadać Czytankom, zgodnie z istniejącą
 Przyjęte szczegóły rekordów dla tej gry:
 
 - Przed rozpoczęciem gry widać aktywny profil, poziom, tempo i dotychczasowy rekord tej kombinacji.
-- Rekord jest najwyższym wynikiem punktowym z zakończonej rozgrywki w danej kombinacji.
+- Rekord jest najwyższym wynikiem punktowym z zakończonej rozgrywki w danej kombinacji,
+  również po dobrowolnym wcześniejszym zakończeniu przez pauzę i potwierdzenie wyjścia.
+  Wynik zapisujemy przed powrotem do wyboru. Anulowanie wyjścia pozostawia partię
+  w pauzie i nie zapisuje rekordu. Komunikat potwierdzenia wyjaśnia zapis w obu językach.
 - Pierwsza ukończona partia ustanawia rekord; niższy wynik ani remis nie zastępują rekordu.
 - Kombinacja, w której dziecko jeszcze nie grało, pokazuje brak rekordu zamiast zera.
 - Profil, poziom i tempo są przypisane do partii w chwili startu. Nie można przełączyć

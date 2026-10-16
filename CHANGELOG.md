@@ -17,6 +17,9 @@ Polish and English in `src/release-notes.json`.
 
 ### Changed
 
+- Save eligible high scores when a player confirms an early exit, and explain the
+  record behavior in Polish and English exit dialogs.
+
 - Deal every allowed operation once per shuffled, game-local deck; balance true/false
   answers and cap identical-answer runs at four across deck boundaries.
 
@@ -37,6 +40,9 @@ Polish and English in `src/release-notes.json`.
   Claude settings from project formatting checks.
 
 ### Tests
+
+- Cover early-exit record persistence, cancellation, ties and lower scores, profile
+  and configuration isolation, and saving all configurations offline in both languages.
 
 - Verify exhaustive deck coverage, answer balance and run limits across refills,
   false-result bounds, constant random sources and independent game decks.

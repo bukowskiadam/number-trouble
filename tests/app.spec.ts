@@ -252,14 +252,29 @@ test('production offline relaunch, all 24 configurations, profile creation, soun
             exact: true,
           })
           .click();
+        await expect(
+          offline.getByText(
+            language === 'en'
+              ? 'Your score will be saved if it is a new record.'
+              : 'Twój wynik zostanie zapisany, jeśli jest nowym rekordem.',
+            { exact: true },
+          ),
+        ).toBeVisible();
         await offline
           .getByRole('button', {
             name: language === 'en' ? 'End game' : 'Zakończ partię',
             exact: true,
           })
           .click();
+        await expect(offline.locator('.best-preview')).toContainText('10');
       }
   }
+  await offline.reload();
+  const earlyRecords = await offline.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+  expect(earlyRecords.profiles[0].records).toEqual({});
+  expect(Object.keys(earlyRecords.profiles[1].records)).toHaveLength(12);
+  for (const record of Object.values(earlyRecords.profiles[1].records))
+    expect(record).toMatchObject({ score: 10 });
   await start(offline, true);
   await answer(offline, true, true);
   await offline.clock.runFor(288);
@@ -402,7 +417,7 @@ test('tablet corrections preserve true results; smallest phone keeps controls vi
   expect(after!.y).toBeGreaterThan(before!.y);
 });
 
-test('leaving can be cancelled; confirmed exit discards the game and restart has fresh listeners', async ({
+test('leaving can be cancelled; confirmed exit saves the record and restart has fresh listeners', async ({
   page,
 }) => {
   await page.goto('./');
@@ -419,6 +434,9 @@ test('leaving can be cancelled; confirmed exit discards the game and restart has
   await expect(page.getByRole('heading', { name: 'Chwila oddechu' })).toBeVisible();
   await page.clock.runFor(1000);
   await expect(page.getByTestId('score')).toHaveText('10');
+  expect(
+    await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).profiles[0].records, key),
+  ).toEqual({});
   await page.getByRole('button', { name: 'Wracam do gry', exact: true }).last().click();
   await answer(page, true);
   await page.clock.runFor(288);
@@ -426,13 +444,15 @@ test('leaving can be cancelled; confirmed exit discards the game and restart has
   await page.getByRole('button', { name: 'Pauza', exact: true }).click();
   await page.getByRole('button', { name: 'Wróć do wyboru', exact: true }).click();
   await page.getByRole('button', { name: 'Zakończ partię', exact: true }).click();
-  await expect(page.locator('.best-preview')).toContainText('Jeszcze przed Tobą');
+  await expect(page.locator('.best-preview')).toContainText('21');
   await page.keyboard.press('ArrowLeft');
   await page.clock.fastForward(60000);
   await expect(page.locator('.board')).toHaveCount(0);
   expect(
     await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!).profiles[0].records, key),
-  ).toEqual({});
+  ).toEqual({ '1-turtle': { score: 21, date: expect.any(String) } });
+  await page.reload();
+  await expect(page.locator('.best-preview')).toContainText('21');
 
   await start(page);
   await expect(page.getByTestId('score')).toHaveText('0');
@@ -516,4 +536,48 @@ test('completed records stay with the starting profile and configuration across 
   const reset = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
   expect(reset.profiles[0]).toEqual(saved.profiles[0]);
   expect(reset.profiles[1]).toEqual({ ...saved.profiles[1], name: 'Maria', records: {} });
+});
+
+test('early exit preserves better records and ties for the selected profile, level and tempo', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await installClock(page);
+  await page.getByRole('button', { name: 'Profile', exact: true }).click();
+  await page.getByLabel('Imię nowego dziecka').fill('Maja');
+  await page.getByRole('button', { name: 'Dodaj profil' }).click();
+  await page.locator('.level-card').nth(3).click();
+  await page.locator('.tempo-card').nth(2).click();
+  await page.getByLabel('Język', { exact: true }).selectOption('en');
+  let best: { score: number; date: string } | undefined;
+  for (const [answers, score] of [
+    [0, 0],
+    [2, 21],
+    [1, 10],
+    [2, 21],
+    [3, 33],
+  ]) {
+    await start(page, true);
+    for (let i = 0; i < answers; i++) {
+      await answer(page, true, true);
+      await page.clock.runFor(288);
+    }
+    await page.getByRole('button', { name: 'Pause', exact: true }).click();
+    await page.getByRole('button', { name: 'Back to selection', exact: true }).click();
+    await page.getByRole('button', { name: 'End game', exact: true }).click();
+    await expect(page.locator('.best-preview')).toContainText(
+      String(Math.max(best?.score ?? 0, score)),
+    );
+    const saved = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)!), key);
+    expect(saved.profiles[0].records).toEqual({});
+    expect(Object.keys(saved.profiles[1].records)).toEqual(['4-cheetah']);
+    const record = saved.profiles[1].records['4-cheetah'];
+    if (best && score <= best.score) expect(record).toEqual(best);
+    else expect(record.score).toBe(score);
+    best = record;
+  }
+  await page.reload();
+  await expect(page.locator('.best-preview')).toContainText('33');
+  await page.locator('.tempo-card').nth(0).click();
+  await expect(page.locator('.best-preview')).toContainText('Yours to discover');
 });
